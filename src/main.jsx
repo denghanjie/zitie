@@ -2,12 +2,17 @@ import React,{useState,useEffect,useRef} from 'react';
 import{createRoot}from'react-dom/client';
 import{isHan,articleLayout,loadCharacters,paginate,pageSvg,downloadPdf}from'./worksheet';
 import './style.css';
+import PoetryPicker from './PoetryPicker';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
 function getDraft(){try{return {...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')}}catch{return example}}
 function Settings({draft,setDraft,busy,generate}){
+ const [inputMode,setInputMode]=useState('paste');
  const change=(k,v)=>setDraft(d=>({...d,[k]:v}));
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
+ <div className="input-tabs" role="group" aria-label="输入方式"><button type="button" aria-pressed={inputMode==='paste'} onClick={()=>setInputMode('paste')}>粘贴文字</button><button type="button" aria-pressed={inputMode==='search'} onClick={()=>setInputMode('search')}>按名称查找</button></div>
+ {inputMode==='search'&&<PoetryPicker onApply={w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl}}));setInputMode('paste')}}/>}
+ {draft.source&&<p className="source-note">已填入：{draft.source.author}《{draft.source.title}》 · 正文可继续修改</p>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
@@ -48,7 +53,7 @@ function App(){
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}
- <p className="privacy">所有内容仅保存在你的设备上，不会上传至服务器。</p></section></main>
+ <p className="privacy">练习正文在本机排版；使用 AI 帮找时，仅查找线索发送给 DeepSeek。</p></section></main>
  <footer>打印建议：A4 纸张 · 纵向 · 100% 比例 · 关闭浏览器页眉页脚 <span>笔顺数据：<a href="https://hanziwriter.org" target="_blank" rel="noreferrer">Hanzi Writer</a> / Make Me a Hanzi</span></footer>
  <div className="print-pages">{result?.svgs.map((s,i)=><div key={i} className="print-page" dangerouslySetInnerHTML={{__html:s}}/>)}</div></>
 }
