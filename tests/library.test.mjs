@@ -16,3 +16,32 @@ assert.equal(new Set(works.map(w=>w.id)).size,works.length);
 for(const w of works){assert(w.text.trim());assert(!w.text.includes("[object Object]"));assert(w.title);assert.match(w.sourceUrl,/^https:\/\/github\.com\/chinese-poetry\/chinese-poetry\/blob\/[a-f0-9]{40}\//);assert(w.sourceIndex>0);}
 assert(works.some(w=>[...w.text].length>3000));
 console.log(`PASS: ${works.length} source-linked records, title/author/verse/traditional search, homonyms, AI hints cannot invent bodies.`);
+
+// Source corrections must survive rebuilds, cached responses and saved drafts.
+const {TEXT_CORRECTIONS,correctWork,migrateLibraryDraft,knownTextCorrection}=await import('../src/text-corrections.js');
+const {paginate,pageSvg}=await import('../src/worksheet.js');
+const denggao=works.find(w=>w.title==='登高'&&w.author==='杜甫');
+assert.equal(denggao.text,'风急天高猿啸哀，渚清沙白鸟飞回。\n无边落木萧萧下，不尽长江滚滚来。\n万里悲秋常作客，百年多病独登台。\n艰难苦恨繁霜鬓，潦倒新停浊酒杯。');
+for(const c of TEXT_CORRECTIONS){
+ const work=data.works.find(w=>w.id===c.id),old={...work,text:c.originalText};
+ assert.deepEqual(correctWork(old),correctWork(work));
+ assert.equal(prepareWorks([old])[0]._text,prepareWorks([work])[0]._text,'cached corpus is corrected before search');
+ const draft={content:c.originalText,source:{title:c.title,author:c.author},font:'serif',fontSize:'small'};
+ assert.equal(migrateLibraryDraft(draft).content,work.text);
+ assert.equal(migrateLibraryDraft(draft).font,'serif');
+ assert.deepEqual(migrateLibraryDraft({...draft,content:draft.content+'自写内容'}),{...draft,content:draft.content+'自写内容'},'do not overwrite user edits');
+ assert.equal(knownTextCorrection(c.originalText).content,work.text);
+ assert.equal(knownTextCorrection(work.text),null);
+ assert.equal(migrateLibraryDraft({...draft,source:null}).content,c.originalText,'pasted text requires explicit correction');
+ assert.throws(()=>correctWork({...work,text:'不匹配的新来源'}),/校订记录与正文不一致/);
+ assert(work.correctionSourceUrl.startsWith('https://github.com/'));
+}
+assert.equal(knownTextCorrection('衮衮诸公'),null,'no global replacement of legitimate words');
+const entry=TEXT_CORRECTIONS.find(c=>c.title==='登高');
+assert.equal(knownTextCorrection(entry.originalText.replace('衮衮','衮\n衮')).content,denggao.text);
+const chars=Object.fromEntries([...new Set([...denggao.text])].filter(c=>/\p{Script=Han}/u.test(c)).map(c=>[c,JSON.parse(fs.readFileSync(`public/data/${c}.json`,'utf8'))]));
+assert.deepEqual(chars['滚'].radStrokes,[0,1,2],'water radical exists');
+const input={content:denggao.text,title:'登高',mode:'article',layout:'poem',grid:'tian'};
+const pages=paginate(input,chars),svg=pages.map((p,i)=>pageSvg(input,chars,p,i,pages.length)).join('');
+for(const stroke of chars['滚'].strokes)assert.equal(svg.split(`d="${stroke}"`).length-1,2,'both 滚 render all strokes including 氵');
+console.log('PASS: corrected 登高 text, complete 滚 strokes, source provenance, cached corpus and draft migration, user edits preserved.');

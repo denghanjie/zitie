@@ -11,4 +11,4 @@
 - 千家诗：[原始文件](https://github.com/chinese-poetry/chinese-poetry/blob/b8594f81a89752241442f2ce267d6f66f96704ee/%E8%92%99%E5%AD%A6/qianjiashi.json)
 - 楚辞：[原始文件](https://github.com/chinese-poetry/chinese-poetry/blob/b8594f81a89752241442f2ce267d6f66f96704ee/%E6%A5%9A%E8%BE%9E/chuci.json)
 
-繁体文本使用 OpenCC 转为简体，未用模型生成或补全文本；标点、异文与段落以此来源为准。部分长文超过字帖的 3000 字限制，需要选择段落填入。
+繁体文本使用 OpenCC 转为简体，未用模型生成或补全文本；标点、异文与段落以此来源为准。已核对的现代用字差异按 src/text-corrections.js 校订，正文保留原始来源并另列校订依据；校订不会全局替换通假字，也不代表全库逐字审核完成。部分长文超过字帖的 3000 字限制，需要选择段落填入。

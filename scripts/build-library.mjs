@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {correctWork} from '../src/text-corrections.js';
 import * as OpenCC from 'opencc-js';
 const source=process.argv[2];
 if(!source)throw Error('Usage: node scripts/build-library.mjs <downloaded-source-directory>');
@@ -25,7 +26,7 @@ for(const[file,upstream,collection,layout]of sources){
   works.push({id,title,author,text,collection,layout,sourceUrl:`https://github.com/chinese-poetry/chinese-poetry/blob/${revision}/${encodeURI(filePath)}`,sourceIndex:sourceIndex+1});
  });
 }
-fs.writeFileSync('public/library/works.json',JSON.stringify({version:revision,notice:'正文来自公开整理本，经 OpenCC 转为简体。可能存在异文或录入错误，请结合原始来源核对；分行沿用数据源，未自动补充分阕。',works}));
+fs.writeFileSync('public/library/works.json',JSON.stringify({version:revision,notice:'正文来自公开整理本，经 OpenCC 转为简体。可能存在异文或录入错误，请结合原始来源核对；分行沿用数据源，未自动补充分阕。',works:works.map(correctWork)}));
 fs.copyFileSync(path.join(source,'LICENSE'),'public/library/LICENSE.txt');
-fs.writeFileSync('public/library/SOURCES.md',`# 诗词全文来源\n\n数据源：[chinese-poetry](https://github.com/chinese-poetry/chinese-poetry)，MIT 许可。\n\n固定版本：\`${revision}\`。共 ${works.length} 条记录。同名、不同首句或不同整理本保留为独立候选，不合并文本。\n\n${sources.map(([,p,c])=>`- ${c}：[原始文件](https://github.com/chinese-poetry/chinese-poetry/blob/${revision}/${encodeURI(p)})`).join('\n')}\n\n繁体文本使用 OpenCC 转为简体，未用模型生成或补全文本；标点、异文与段落以此来源为准。部分长文超过字帖的 3000 字限制，需要选择段落填入。\n`);
+fs.writeFileSync('public/library/SOURCES.md',`# 诗词全文来源\n\n数据源：[chinese-poetry](https://github.com/chinese-poetry/chinese-poetry)，MIT 许可。\n\n固定版本：\`${revision}\`。共 ${works.length} 条记录。同名、不同首句或不同整理本保留为独立候选，不合并文本。\n\n${sources.map(([,p,c])=>`- ${c}：[原始文件](https://github.com/chinese-poetry/chinese-poetry/blob/${revision}/${encodeURI(p)})`).join('\n')}\n\n繁体文本使用 OpenCC 转为简体，未用模型生成或补全文本；标点、异文与段落以此来源为准。已核对的现代用字差异按 src/text-corrections.js 校订，正文保留原始来源并另列校订依据；校订不会全局替换通假字，也不代表全库逐字审核完成。部分长文超过字帖的 3000 字限制，需要选择段落填入。\n`);
 console.log(`Built ${works.length} source-linked records.`);

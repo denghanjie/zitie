@@ -1,3 +1,4 @@
+import {migrateLibraryDraft,knownTextCorrection} from './text-corrections.js';
 import React,{useState,useEffect,useRef} from 'react';
 import{createRoot}from'react-dom/client';
 import{isHan,articleLayout,loadCharacters,paginate,pageSvg,downloadPdf}from'./worksheet';
@@ -6,9 +7,10 @@ import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
 import {TYPEFACES,normalizeTypeface,loadTypeface,FONT_SIZES,normalizeFontSize} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return {...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize)}}catch{return {...example,font:'kai',fontSize:'normal'}}}
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize)})}catch{return {...example,font:'kai',fontSize:'normal'}}}
 function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
+ const correction=knownTextCorrection(draft.content);
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
  const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
@@ -18,6 +20,7 @@ function Settings({draft,setDraft,busy,generate}){
  {inputMode==='textbook'&&<TextbookPicker onApply={applyWork}/>}
  {draft.source&&<p className="source-note">已填入：《{draft.source.title}》 · {draft.source.author}{draft.source.collection&&<> · {draft.source.collection}</>} · 正文可继续修改</p>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
+ {correction&&<p className="source-note" role="alert">这份《{correction.title}》含已确认的旧版用字差异。<button type="button" onClick={()=>change('content',correction.content)}>改用校订正文</button></p>}
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
@@ -36,6 +39,7 @@ function App(){
  useEffect(()=>setError(''),[draft]);
  async function generate(){
   setError('');
+  if(knownTextCorrection(draft.content)){setError('正文含已确认的旧版用字差异，请先点击「改用校订正文」。');return;}
   if(!draft.content.trim()){setError('请先输入想练习的文字。');return;}
   if(draft.mode==='single'&&![...draft.content].some(isHan)){setError('逐字练习需要至少一个汉字。');return;}
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
