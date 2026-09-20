@@ -31,3 +31,7 @@ export async function loadTypeface(id,content){
  catch{throw Error('字体加载失败，请检查网络后重试，或改选笔顺楷体。');}
  return Object.fromEntries(chars.filter(c=>result[c]).map(c=>[c,result[c]]));
 }
+
+export const FONT_SIZES = [{id:'small',label:'小 · 80%',scale:.8},{id:'normal',label:'标准 · 100%',scale:1},{id:'large',label:'大 · 110%',scale:1.1}];
+export const normalizeFontSize=id=>FONT_SIZES.some(s=>s.id===id)?id:'normal';
+export const fontScale=id=>FONT_SIZES.find(s=>s.id===normalizeFontSize(id)).scale;

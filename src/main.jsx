@@ -4,9 +4,9 @@ import{isHan,articleLayout,loadCharacters,paginate,pageSvg,downloadPdf}from'./wo
 import './style.css';
 import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
-import {TYPEFACES,normalizeTypeface,loadTypeface} from './typefaces';
+import {TYPEFACES,normalizeTypeface,loadTypeface,FONT_SIZES,normalizeFontSize} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return {...d,font:normalizeTypeface(d.font)}}catch{return {...example,font:'kai'}}}
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return {...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize)}}catch{return {...example,font:'kai',fontSize:'normal'}}}
 function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
@@ -23,6 +23,7 @@ function Settings({draft,setDraft,busy,generate}){
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
  {draft.mode==='article'&&draft.layout!=='prose'&&<label className="layout-setting">诗词断句<select aria-label="诗词断句" value={draft.lineBreak||'auto'} onChange={e=>change('lineBreak',e.target.value)}><option value="auto">自动 · 优先保留原有分行</option><option value="original">完全保留原有分行</option><option value="punctuation">按标点分句（保留空行分阕）</option></select><small>在上方文字框编辑换行；空一行即可分阕。自动识别不合适时，请选择「诗词」或「文章」。</small></label>}
  <label className="layout-setting typeface-setting">范字字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label} · {f.description}</option>)}</select><small>{draft.mode==='single'&&draft.font&&draft.font!=='kai'?'六个范字使用所选字体；下方笔顺仍以笔顺楷体示意。':'初学建议选笔顺楷体；宋体、黑体适合感受不同的字形结构。'} 选择后点击「生成字帖」更新。</small></label>
+ <label className="layout-setting">范字大小<select aria-label="范字大小" value={draft.fontSize} onChange={e=>change('fontSize',e.target.value)}>{FONT_SIZES.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select><small>按标准范字比例缩放，字格大小和分页保持不变；笔顺示意不缩放。选择后点击「生成字帖」更新。</small></label>
  <fieldset><legend>字格类型</legend><div className="grid-options">{[['tian','田字格','田'],['mi','米字格','米']].map(([v,t,g])=><button type="button" key={v} className={draft.grid===v?'selected':''} aria-pressed={draft.grid===v} onClick={()=>change('grid',v)}><span className="grid-icon">{g}</span>{t}</button>)}</div></fieldset>
  <label className="section-title" htmlFor="title">字帖标题</label><input id="title" maxLength={24} value={draft.title} onChange={e=>change('title',e.target.value)} placeholder="汉字练习"/>
  <button className="primary generate" disabled={busy} type="submit">{busy?'正在生成…':'生成字帖'}</button>
@@ -40,7 +41,7 @@ function App(){
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
   setBusy(true);setMessage('正在准备字形和笔顺…');
   try{
-   const input={...draft,font:normalizeTypeface(draft.font)};
+   const input={...draft,font:normalizeTypeface(draft.font),fontSize:normalizeFontSize(draft.fontSize)};
    const [data,fontGlyphs]=await Promise.all([loadCharacters(input.content),loadTypeface(input.font,input.content)]);
    const layoutInfo=input.mode==='article'?articleLayout(input):null;
    const layoutNote=layoutInfo?.poetry?`诗词排版 · ${layoutInfo.breakMode} · 空行分阕。 `:'';

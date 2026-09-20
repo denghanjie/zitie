@@ -1,3 +1,4 @@
+import {fontScale} from './typefaces.js';
 import {isHan, articleLayout, paginatePoetry, wrapLine} from './poetry.js';
 export {isHan, articleLayout} from './poetry.js';
 const cache = new Map();
@@ -36,6 +37,12 @@ function glyph(c,d,x,y,size,color,step,fontGlyph) {
   if(!d) return text(c,x+size/2,y+size*.77,size*.77,color,'middle');
   return `<g transform="translate(${x+size*.08} ${y+size*.08}) scale(${size*.84/1024} ${-size*.84/1024}) translate(0 -900)">${d.strokes.map((p,i)=>`<path d="${p}" fill="${step===undefined?color:i<step?'#606c65':i===step?'#202f27':'#eeeeeb'}"/>`).join('')}</g>`;
 }
+function modelGlyph(c,d,x,y,size,color,fontGlyph,scale) {
+ const drawing=glyph(c,d,x,y,size,color,undefined,fontGlyph);
+ if(scale===1)return drawing;
+ const cx=x+size/2,cy=y+size/2;
+ return `<g data-model-scale="${scale}" transform="translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})">${drawing}</g>`;
+}
 function grid(x,y,s,type) {
  return `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="none" stroke="#95b1a0" stroke-width="1"/><path d="M${x+s/2} ${y}v${s} M${x} ${y+s/2}h${s}${type==='mi'?` M${x} ${y}l${s} ${s} M${x+s} ${y}l-${s} ${s}`:''}" fill="none" stroke="#b4c8bc" stroke-width=".65" stroke-dasharray="4 4"/>`;
 }
@@ -65,13 +72,14 @@ export function paginate(input,data) {
  });
 }
 export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
+ const scale=fontScale(input.fontSize);
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="${esc(input.title||'汉字练习')} 第${index+1}页"><rect width="794" height="1123" fill="white"/>`;
  s+=text(input.title||'汉字练习',397,77,32,'#18271e','middle');
  s+=text('姓名：____________    日期：____________',704,120,15,'#66746b','end');
  s+='<path d="M85 137H709" stroke="#d5ded7"/>';
  if(input.mode==='single') {
   for(const {c,y,h} of page){
-   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+glyph(c,data[c],85+i*105,y,97,i===0?'#202721':'#aeb3ae',undefined,fontGlyphs[c]);
+   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+modelGlyph(c,data[c],85+i*105,y,97,i===0?'#202721':'#aeb3ae',fontGlyphs[c],scale);
    s+=text('笔顺',85,y+121,12);
    const d=data[c];
    if(d) d.strokes.forEach((_,i)=>{
@@ -93,7 +101,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
    for(let col=0;col<count;col++){
     const x=left+col*cell,y=page.rowY?.[r]??(top+r*(cell+gap));
     s+=grid(x,y,cell,input.grid);
-    if(row[col])s+=glyph(row[col],data[row[col]],x,y,cell,'#a8afa8',undefined,fontGlyphs[row[col]]);
+    if(row[col])s+=modelGlyph(row[col],data[row[col]],x,y,cell,'#a8afa8',fontGlyphs[row[col]],scale);
    }
   });
  }

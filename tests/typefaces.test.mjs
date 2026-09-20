@@ -44,5 +44,24 @@ try{
  const page=paginate(prose,strokes)[0];
  assert.equal(pageSvg(prose,strokes,page,0,1,sample).split('M11 12L13 14Z').length-1,2);
  assert(pageSvg({...input,font:'kai'},strokes,pages[0],0,1).includes(strokes['永'].strokes[0]));
+ for(const mode of ['single','article'])for(const font of ['kai','serif','sans']){
+  const base={...input,mode,font,content:'永',layout:'prose'};
+  const originalPage=paginate(base,strokes)[0];
+  const outlines=font==='kai'?{}:sample;
+  const normal=pageSvg(base,strokes,originalPage,0,1,outlines);
+  assert.equal(pageSvg({...base,fontSize:'invalid'},strokes,originalPage,0,1,outlines),normal);
+  for(const [fontSize,scale] of [['small',.8],['large',1.1]]){
+   const sized={...base,fontSize};
+   assert.deepEqual(paginate(sized,strokes)[0],originalPage,'size must preserve pagination');
+   const svg=pageSvg(sized,strokes,originalPage,0,1,outlines);
+   assert.equal((svg.match(/data-model-scale=/g)||[]).length,mode==='single'?6:1,'only model characters scale');
+   const unwrapped=svg.replace(/<g data-model-scale="[^"]+" transform="translate\(([^ ]+) ([^)]+)\) scale\(([^)]+)\) translate\(([^ ]+) ([^)]+)\)">([\s\S]*?)<\/g><\/g>/g,(_,cx,cy,k,nx,ny,inner)=>{
+    assert.equal(Number(k),scale);assert.equal(Number(cx),-Number(nx));assert.equal(Number(cy),-Number(ny));return inner+'</g>';
+   });
+   assert.equal(unwrapped,normal,'grids, headings, stroke diagrams and glyph paths are unchanged');
+   const fallback=pageSvg(sized,{},originalPage,0,1,{});
+   assert.equal((fallback.match(/data-model-scale=/g)||[]).length,mode==='single'?6:1,'fallback text scales too');
+  }
+ }
 }finally{globalThis.fetch=originalFetch;}
 console.log('PASS: licensed font coverage, vector rendering, six model cells, independent stroke order, fallback, lazy caching and retry.');
