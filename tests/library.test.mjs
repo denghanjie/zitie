@@ -24,7 +24,7 @@ const denggao=works.find(w=>w.title==='登高'&&w.author==='杜甫');
 assert.equal(denggao.text,'风急天高猿啸哀，渚清沙白鸟飞回。\n无边落木萧萧下，不尽长江滚滚来。\n万里悲秋常作客，百年多病独登台。\n艰难苦恨繁霜鬓，潦倒新停浊酒杯。');
 for(const c of TEXT_CORRECTIONS){
  const work=data.works.find(w=>w.id===c.id),old={...work,text:c.originalText};
- assert.deepEqual(correctWork(old),correctWork(work));
+ assert.equal(prepareWorks([old])[0].text,prepareWorks([work])[0].text);
  assert.equal(prepareWorks([old])[0]._text,prepareWorks([work])[0]._text,'cached corpus is corrected before search');
  const draft={content:c.originalText,source:{title:c.title,author:c.author},font:'serif',fontSize:'small'};
  assert.equal(migrateLibraryDraft(draft).content,work.text);
@@ -45,3 +45,33 @@ const input={content:denggao.text,title:'登高',mode:'article',layout:'poem',gr
 const pages=paginate(input,chars),svg=pages.map((p,i)=>pageSvg(input,chars,p,i,pages.length)).join('');
 for(const stroke of chars['滚'].strokes)assert.equal(svg.split(`d="${stroke}"`).length-1,2,'both 滚 render all strokes including 氵');
 console.log('PASS: corrected 登高 text, complete 滚 strokes, source provenance, cached corpus and draft migration, user edits preserved.');
+
+const {EDITORIAL_EDITS,applyEditorial,migrateEditorialDraft,textIntegrityIssue}=await import('../src/editorial.js');
+const {qualityFor,canApplyWork,canUseImportedDraft}=await import('../src/quality.js');
+for(const edit of EDITORIAL_EDITS){
+ const old={id:edit.key.replace('poetry:',''),title:edit.titleBefore,author:edit.authorBefore,text:edit.beforeText};
+ const corrected=applyEditorial(old,edit.key);
+ assert.equal(corrected.text,edit.afterText);assert.equal(corrected.author,edit.authorAfter);
+ assert.deepEqual(applyEditorial(corrected,edit.key),corrected,'editorial corrections are idempotent');
+ const draft={title:edit.titleBefore,content:edit.beforeText,source:{title:edit.titleBefore,author:edit.authorBefore}};
+ assert.equal(migrateEditorialDraft(draft).content,edit.afterText);
+ assert.equal(migrateEditorialDraft({...draft,content:edit.beforeText+'自写内容'}).content,edit.beforeText+'自写内容');
+}
+const ledger=JSON.parse(fs.readFileSync('public/library/collation.json','utf8'));
+assert.equal(ledger.summary.entries,1771);assert.equal(ledger.summary.complete,false);
+assert.equal(ledger.entries.length,1771);assert.equal(new Set(ledger.entries.map(r=>r.key)).size,1771);
+for(const w of works){
+ const key=`poetry:${w.id}`;assert(qualityFor(key).textHash);
+ if(/[□�〓]/u.test(w.text)||w.author.length===1)assert.equal(canApplyWork(key),false);
+}
+assert(textIntegrityIssue('空□'));assert.equal(textIntegrityIssue('不尽长江滚滚来'),null);
+assert.equal(await canUseImportedDraft({content:'自由输入'}),true);
+assert.equal(await canUseImportedDraft({content:'旧内容',source:{qualityKey:'unknown'}}),false);
+for(const q of ['静夜思','登高','枫桥夜泊'])assert(searchWorks(works,q).some(w=>canApplyWork(`poetry:${w.id}`)),q);
+const poem=(title,author)=>works.find(w=>w.title===title&&w.author===author);
+assert(poem('行宫','元稹'));assert(poem('赤壁','杜牧'));assert(poem('登鹳雀楼','王之涣'));
+assert(works.some(w=>w.text.includes('云中谁寄锦书来')));
+assert(works.some(w=>w.text.includes('江枫渔火对愁眠')));
+assert(works.some(w=>w.text.includes('休说鲈鱼堪脍')),'missing characters restored inside their clause');
+assert(!works.some(w=>/[a-zA-Z]/u.test(w.text)),'pinyin must not enter worksheets');
+console.log('PASS: full ledger coverage, immutable editorial evidence, unresolved-source gating, author fixes, missing-character placement, draft migration.');

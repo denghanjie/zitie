@@ -1,3 +1,4 @@
+import {applyEditorial} from '../src/editorial.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 const catalog=JSON.parse(fs.readFileSync('data/textbooks/catalog.json','utf8'));
@@ -5,7 +6,8 @@ const texts=JSON.parse(fs.readFileSync('data/textbooks/texts.json','utf8'));
 const books=catalog.map(book=>({...book,
  coverageNote:'收录课内古诗文与古诗词诵读；暂不含语文园地中的日积月累。',
  entries:book.entries.map(entry=>{
-  const work=texts[entry.title];
+  const raw=texts[entry.title];
+  const work=raw?applyEditorial(raw,`textbook:${entry.title}`):null;
   if(!work?.text?.trim()||!work.author||!work.sourceUrl?.startsWith('https://'))throw Error(`Missing source/text: ${book.id} ${entry.title}`);
   if(/\[object Object\]|\uFFFD|https?:\/\//u.test(work.text))throw Error(`Invalid body: ${entry.title}`);
   return {...entry,...work,id:crypto.createHash('sha256').update(`${book.id}:${entry.title}`).digest('hex').slice(0,16)};

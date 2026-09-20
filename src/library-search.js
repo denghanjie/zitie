@@ -1,6 +1,7 @@
+import {applyEditorial} from './editorial.js';
 import {correctWork} from './text-corrections.js';
 export const normalize = s => String(s).normalize('NFKC').replace(/[\p{P}\p{Z}\s]/gu,'').toLowerCase();
-export function prepareWorks(works){return works.map(correctWork).map(w=>({...w,_title:normalize(w.title),_author:normalize(w.author.replace(/^[^：]+：|^（[^）]*）/u,'')),_text:normalize(w.text)}));}
+export function prepareWorks(works){return works.map(correctWork).map(w=>applyEditorial(w)).map(w=>({...w,_title:normalize(w.title),_author:normalize(w.author.replace(/^[^：]+：|^（[^）]*）/u,'')),_text:normalize(w.text)}));}
 function grams(s){return new Set([...s].slice(0,-1).map((_,i)=>[...s].slice(i,i+2).join('')));}
 export function searchWorks(works,query,limit=30){
  const tokens=query.trim().split(/[\s《》·]+/u).map(normalize).filter(Boolean);

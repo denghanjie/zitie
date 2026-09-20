@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node tests/layout.test.mjs && node tests/library.test.mjs && node scripts/build-textbooks.mjs --check && node tests/textbooks.test.mjs && node tests/typefaces.test.mjs && python3 -m unittest discover -s tests -p \"test_*.py\"",
+    "test": "node tests/layout.test.mjs && node tests/library.test.mjs && node scripts/build-textbooks.mjs --check && node tests/textbooks.test.mjs && node tests/typefaces.test.mjs && python3 scripts/build-collation.py --check && python3 -m unittest discover -s tests -p \"test_*.py\"",
     "build:textbooks": "node scripts/build-textbooks.mjs"
   },
   "dependencies": {

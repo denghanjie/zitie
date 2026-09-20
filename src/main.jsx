@@ -1,3 +1,5 @@
+import {canUseImportedDraft} from './quality';
+import {textIntegrityIssue} from './editorial.js';
 import {migrateLibraryDraft,knownTextCorrection} from './text-corrections.js';
 import React,{useState,useEffect,useRef} from 'react';
 import{createRoot}from'react-dom/client';
@@ -12,7 +14,7 @@ function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
  const correction=knownTextCorrection(draft.content);
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
- const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection}}));setInputMode('paste')};
+ const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
  <div className="input-tabs" role="group" aria-label="输入方式"><button type="button" aria-pressed={inputMode==='paste'} onClick={()=>setInputMode('paste')}>粘贴文字</button><button type="button" aria-pressed={inputMode==='search'} onClick={()=>setInputMode('search')}>按名称查找</button><button type="button" aria-pressed={inputMode==='textbook'} onClick={()=>setInputMode('textbook')}>教材选篇</button></div>
@@ -39,12 +41,14 @@ function App(){
  useEffect(()=>setError(''),[draft]);
  async function generate(){
   setError('');
+  if(textIntegrityIssue(draft.content)){setError(textIntegrityIssue(draft.content));return;}
   if(knownTextCorrection(draft.content)){setError('正文含已确认的旧版用字差异，请先点击「改用校订正文」。');return;}
   if(!draft.content.trim()){setError('请先输入想练习的文字。');return;}
   if(draft.mode==='single'&&![...draft.content].some(isHan)){setError('逐字练习需要至少一个汉字。');return;}
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
   setBusy(true);setMessage('正在准备字形和笔顺…');
   try{
+   if(!await canUseImportedDraft(draft)){setError('已保存的资料库正文尚未完成校勘，请重新查找文字已对照的版本，或查看正文校勘记录。');return;}
    const input={...draft,font:normalizeTypeface(draft.font),fontSize:normalizeFontSize(draft.fontSize)};
    const [data,fontGlyphs]=await Promise.all([loadCharacters(input.content),loadTypeface(input.font,input.content)]);
    const layoutInfo=input.mode==='article'?articleLayout(input):null;
@@ -65,7 +69,7 @@ function App(){
  useEffect(()=>{if(!initialized.current){initialized.current=true;generate()}},[]);
  const dirty=result&&JSON.stringify(draft)!==JSON.stringify(result.input);
  async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));setMessage('PDF 已生成，请查看浏览器下载列表。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
- return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><span className="motto">静下心，写好每一个字。</span></header>
+ return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><span className="motto"><a href="library/collation.html" target="_blank" rel="noreferrer">正文校勘记录 ↗</a></span></header>
  <section className="intro"><h1>把喜欢的文字，写成自己的字。</h1><p>粘贴文字，生成属于你的练字帖。</p></section>
  <main><Settings {...{draft,setDraft,busy,generate}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>window.print()} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>

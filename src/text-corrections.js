@@ -1,3 +1,4 @@
+import {editorialResult,editorialTextCorrection,migrateEditorialDraft} from './editorial.js';
 // Reviewed phrase-level modern orthography corrections; never replace characters globally.
 export const TEXT_CORRECTIONS = [
   {
@@ -106,6 +107,7 @@ export const TEXT_CORRECTIONS = [
 const compact=s=>s.replace(/\s/gu,'');
 const replacePhrase=(s,c)=>s.replace(new RegExp([...c.from].join('\\s*'),'u'),c.to);
 export function correctWork(work){
+ if(editorialResult(work))return work;
  const entry=TEXT_CORRECTIONS.find(c=>c.id===work.id&&c.title===work.title&&c.author===work.author);
  if(!entry)return work;
  const corrected=entry.changes.reduce((s,c)=>s.replace(c.from,c.to),entry.originalText);
@@ -115,12 +117,13 @@ export function correctWork(work){
 export function knownTextCorrection(content){
  // Match a complete known source text, allowing only whitespace differences.
  const entry=TEXT_CORRECTIONS.find(c=>compact(c.originalText)===compact(content));
- if(!entry)return null;
- return {content:entry.changes.reduce(replacePhrase,content),title:entry.title};
+ if(!entry)return editorialTextCorrection(content);
+ const fixed=entry.changes.reduce(replacePhrase,content);
+ return editorialTextCorrection(fixed)||{content:fixed,title:entry.title};
 }
 export function migrateLibraryDraft(draft){
  if(!draft.source)return draft;
  const entry=TEXT_CORRECTIONS.find(c=>c.title===draft.source.title&&c.author===draft.source.author&&compact(c.originalText)===compact(draft.content));
- if(!entry)return draft;
- return {...draft,content:entry.changes.reduce(replacePhrase,draft.content)};
+ if(!entry)return migrateEditorialDraft(draft);
+ return migrateEditorialDraft({...draft,content:entry.changes.reduce(replacePhrase,draft.content)});
 }
