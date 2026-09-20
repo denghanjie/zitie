@@ -12,25 +12,32 @@ const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，
 function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize)})}catch{return {...example,font:'kai',fontSize:'normal'}}}
 function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
+ const dialog=useRef(null);
+ useEffect(()=>{if(inputMode==='paste')return;const el=dialog.current;el.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{el.close();document.body.style.overflow=previous}},[inputMode]);
  const correction=knownTextCorrection(draft.content);
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
  const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
- <div className="input-tabs" role="group" aria-label="输入方式"><button type="button" aria-pressed={inputMode==='paste'} onClick={()=>setInputMode('paste')}>粘贴文字</button><button type="button" aria-pressed={inputMode==='search'} onClick={()=>setInputMode('search')}>按名称查找</button><button type="button" aria-pressed={inputMode==='textbook'} onClick={()=>setInputMode('textbook')}>教材选篇</button></div>
+ <div className="content-actions"><span>直接粘贴，或从资料库选择</span><div><button type="button" onClick={()=>setInputMode('search')}>查找诗文 ↗</button><button type="button" onClick={()=>setInputMode('textbook')}>教材选篇 ↗</button></div></div>
+ <dialog ref={dialog} className="library-dialog" aria-labelledby="library-title" onCancel={()=>setInputMode('paste')} onClose={()=>setInputMode('paste')}>
+ <div className="library-heading"><div><h2 id="library-title">{inputMode==='search'?'查找诗文':'教材选篇'}</h2><p>选择篇目，预览正文后填入字帖。</p></div><button type="button" aria-label="关闭选篇" onClick={()=>setInputMode('paste')}>关闭 ×</button></div>
  {inputMode==='search'&&<PoetryPicker onApply={applyWork}/>}
  {inputMode==='textbook'&&<TextbookPicker onApply={applyWork}/>}
+ </dialog>
  {draft.source&&<p className="source-note">已填入：《{draft.source.title}》 · {draft.source.author}{draft.source.collection&&<> · {draft.source.collection}</>} · 正文可继续修改</p>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
  {correction&&<p className="source-note" role="alert">这份《{correction.title}》含已确认的旧版用字差异。<button type="button" onClick={()=>change('content',correction.content)}>改用校订正文</button></p>}
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
+ <div className="font-controls"><label className="layout-setting">字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label}</option>)}</select></label><label className="layout-setting">字号<select aria-label="范字大小" value={draft.fontSize} onChange={e=>change('fontSize',e.target.value)}>{FONT_SIZES.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label></div>
+ <details className="advanced-settings"><summary>更多设置<span>排版 · 字格 · 标题</span></summary>
+ <p className="source-note">字号只调整范字，字格大小不变；逐字练习的笔顺始终使用笔顺楷体。</p>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
  {draft.mode==='article'&&draft.layout!=='prose'&&<label className="layout-setting">诗词断句<select aria-label="诗词断句" value={draft.lineBreak||'auto'} onChange={e=>change('lineBreak',e.target.value)}><option value="auto">自动 · 优先保留原有分行</option><option value="original">完全保留原有分行</option><option value="punctuation">按标点分句（保留空行分阕）</option></select><small>在上方文字框编辑换行；空一行即可分阕。自动识别不合适时，请选择「诗词」或「文章」。</small></label>}
- <label className="layout-setting typeface-setting">范字字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label} · {f.description}</option>)}</select><small>{draft.mode==='single'&&draft.font&&draft.font!=='kai'?'六个范字使用所选字体；下方笔顺仍以笔顺楷体示意。':'初学建议选笔顺楷体；宋体、黑体适合感受不同的字形结构。'} 选择后点击「生成字帖」更新。</small></label>
- <label className="layout-setting">范字大小<select aria-label="范字大小" value={draft.fontSize} onChange={e=>change('fontSize',e.target.value)}>{FONT_SIZES.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select><small>按标准范字比例缩放，字格大小和分页保持不变；笔顺示意不缩放。选择后点击「生成字帖」更新。</small></label>
  <fieldset><legend>字格类型</legend><div className="grid-options">{[['tian','田字格','田'],['mi','米字格','米']].map(([v,t,g])=><button type="button" key={v} className={draft.grid===v?'selected':''} aria-pressed={draft.grid===v} onClick={()=>change('grid',v)}><span className="grid-icon">{g}</span>{t}</button>)}</div></fieldset>
  <label className="section-title" htmlFor="title">字帖标题</label><input id="title" maxLength={24} value={draft.title} onChange={e=>change('title',e.target.value)} placeholder="汉字练习"/>
+ </details>
  <button className="primary generate" disabled={busy} type="submit">{busy?'正在生成…':'生成字帖'}</button>
  </form>
 }
