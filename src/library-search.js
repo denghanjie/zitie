@@ -19,6 +19,28 @@ export function mergeLibraries(poetry,textbooks){
  }
  return works;
 }
+function nearVerseWorks(works,tokens,limit){
+ // Only suggest a single-character difference in a long Han phrase; never edit the text.
+ const patterns=tokens.map(t=>{
+  if(!/^[\p{Script=Han}]{6,}$/u.test(t))return null;
+  const c=[...t],variants=[];
+  for(let i=0;i<=c.length;i++)variants.push(c.slice(0,i).join('')+'[\\p{Script=Han}]'+c.slice(i).join(''));
+  for(let i=0;i<c.length;i++){
+   variants.push(c.slice(0,i).join('')+'[\\p{Script=Han}]'+c.slice(i+1).join(''));
+   variants.push(c.slice(0,i).join('')+c.slice(i+1).join(''));
+  }
+  return new RegExp(variants.join('|'),'u');
+ });
+ return works.flatMap(w=>{
+  let differences=0;
+  for(let i=0;i<tokens.length;i++){
+   const t=tokens[i];
+   if(w._title.includes(t)||w._author.includes(t)||w._text.includes(t))continue;
+   if(patterns[i]?.test(w._text))differences++;else return [];
+  }
+  return differences===1?[{...w,searchNote:'近似诗句匹配：输入可能有一字差异，请核对原文。'}]:[];
+ }).slice(0,limit);
+}
 function grams(s){return new Set([...s].slice(0,-1).map((_,i)=>[...s].slice(i,i+2).join('')));}
 export function searchWorks(works,query,limit=30){
  const tokens=query.trim().split(/[\s《》·]+/u).map(normalize).filter(Boolean);
@@ -41,6 +63,7 @@ export function searchWorks(works,query,limit=30){
   }
   return {work:w,score};
  }).filter(r=>r.score>0);
+ if(!ranked.length)return nearVerseWorks(works,tokens,limit);
  return (ranked.some(r=>r.score>=40)?ranked.filter(r=>r.score>=40):ranked).sort((a,b)=>b.score-a.score||a.work.title.localeCompare(b.work.title,'zh')).slice(0,limit).map(r=>r.work);
 }
 export function hintedWorks(works,suggestions){

@@ -36190,6 +36190,19 @@
       "textHash": "a04e092b9a518b6d290df6dc4179e415b1e87f461adcd7afb2d345921580e806",
       "status": "no-reference",
       "candidates": []
+    },
+    {
+      "key": "poetry:yangshen-linjiangxian",
+      "title": "临江仙·滚滚长江东逝水",
+      "author": "杨慎",
+      "characters": 60,
+      "textHash": "5ef84f81ff9b1c96d79ed85d1cc08d27823551c3c85aa23729543012c5b775d2",
+      "reference": {
+        "title": "临江仙·滚滚长江东逝水",
+        "author": "杨慎",
+        "url": "https://github.com/ddabb/poetryesm/blob/34d14ed12372b9d55406f2b66303c66cd1a3dfe0/source/明代/杨慎.json"
+      },
+      "referenceText": "滚滚长江东逝水，\n浪花淘尽英雄。\n是非成败转头空。\n青山依旧在，\n几度夕阳红。\n白发渔樵江渚上，\n惯看秋月春风。\n一壶浊酒喜相逢。\n古今多少事，\n都付笑谈中。"
     }
   ]
 }

@@ -7,7 +7,7 @@ poems=read('public/library/works.json')['works']
 texts=read('data/textbooks/texts.json')
 entries={**{f"poetry:{w['id']}":w for w in poems},**{f'textbook:{t}':dict(w,title=t) for t,w in texts.items()}}
 evidence=read('data/library/collation-evidence.json')['rows']
-assert len(entries)==len(evidence)==1771
+assert len(entries)==len(evidence)
 assert set(entries)=={r['key'] for r in evidence}
 def han(s):return ''.join(re.findall(r'[\u3400-\u9fff\U00020000-\U0003134f]',s))
 def normal_author(s):

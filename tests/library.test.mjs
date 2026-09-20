@@ -13,7 +13,7 @@ assert(searchWorks(works,'水调歌头').every(w=>w._title.includes('水调歌�
 assert(hintedWorks(works,[{title:'梦游天姥吟留别',author:'李白',quote:''}]).every(w=>w.author==='李白'));
 assert.equal(hintedWorks(works,[{title:'编造的无名诗词xyz',author:'不存在'}]).length,0);
 assert.equal(new Set(works.map(w=>w.id)).size,works.length);
-for(const w of works){assert(w.text.trim());assert(!w.text.includes("[object Object]"));assert(w.title);assert.match(w.sourceUrl,/^https:\/\/github\.com\/chinese-poetry\/chinese-poetry\/blob\/[a-f0-9]{40}\//);assert(w.sourceIndex>0);}
+for(const w of works){assert(w.text.trim());assert(!w.text.includes("[object Object]"));assert(w.title);if(w.sourceKind!=='supplement')assert.match(w.sourceUrl,/^https:\/\/github\.com\/chinese-poetry\/chinese-poetry\/blob\/[a-f0-9]{40}\//);assert(w.sourceIndex>0);}
 assert(works.some(w=>[...w.text].length>3000));
 console.log(`PASS: ${works.length} source-linked records, title/author/verse/traditional search, homonyms, AI hints cannot invent bodies.`);
 
@@ -58,8 +58,8 @@ for(const edit of EDITORIAL_EDITS){
  assert.equal(migrateEditorialDraft({...draft,content:edit.beforeText+'自写内容'}).content,edit.beforeText+'自写内容');
 }
 const ledger=JSON.parse(fs.readFileSync('public/library/collation.json','utf8'));
-assert.equal(ledger.summary.entries,1771);assert.equal(ledger.summary.complete,false);
-assert.equal(ledger.entries.length,1771);assert.equal(new Set(ledger.entries.map(r=>r.key)).size,1771);
+assert.equal(ledger.summary.entries,data.works.length+216);assert.equal(ledger.summary.complete,false);
+assert.equal(ledger.entries.length,data.works.length+216);assert.equal(new Set(ledger.entries.map(r=>r.key)).size,data.works.length+216);
 for(const w of works){
  const key=`poetry:${w.id}`;assert(qualityFor(key).textHash);
  if(/[□�〓]/u.test(w.text)||w.author.length===1)assert.equal(canApplyWork(key),false);
@@ -94,3 +94,14 @@ assert(searchWorks(unified,simplify('窈窕淑女，君子好逑')).some(w=>w.ti
 assert.equal(new Set(unified.map(w=>w.id)).size,unified.length);
 assert(unified.filter(w=>w.sourceKind==='textbook').some(w=>!canApplyWork(w.qualityKey)),'merging must not promote unverified texts');
 console.log('PASS: unified poetry/textbook search, exact verses, AI anonymous-author hints, deduplication and quality keys.');
+
+// Missing common works and a one-character omission must yield sourced candidates.
+const yang=works.find(w=>w.id==='yangshen-linjiangxian');
+assert(yang&&canApplyWork(`poetry:${yang.id}`));
+for(const q of ['杨慎 临江仙','滚滚长江东逝水 浪花淘尽英雄','滚滚长江逝水 浪花淘尽英雄','滚滚长江逝水，浪花淘尽英雄']){
+ const hit=searchWorks(unified,q).find(w=>w.id===yang.id);assert(hit,q);assert.equal(hit.text,yang.text);
+ if(q.includes('长江逝水'))assert(hit.searchNote);
+}
+assert.equal(hintedWorks(unified,[{author:'杨慎',title:'临江仙',quote:''}])[0].id,yang.id);
+assert.equal(searchWorks(unified,'滚滚黄河西游记 浪花淘尽英雄').length,0);
+console.log('PASS: sourced Yang Shen poem, author/title hints, single-character verse suggestion without modifying the body.');

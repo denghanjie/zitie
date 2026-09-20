@@ -12,3 +12,10 @@
 - 楚辞：[原始文件](https://github.com/chinese-poetry/chinese-poetry/blob/b8594f81a89752241442f2ce267d6f66f96704ee/%E6%A5%9A%E8%BE%9E/chuci.json)
 
 繁体文本使用 OpenCC 转为简体，未用模型生成或补全文本；标点、异文与段落以此来源为准。已核对的现代用字差异按 src/text-corrections.js 校订，正文保留原始来源并另列校订依据；校订不会全局替换通假字，也不代表全库逐字审核完成。部分长文超过字帖的 3000 字限制，需要选择段落填入。
+
+## 历代名篇补充
+
+另收录杨慎《临江仙·滚滚长江东逝水》，见 `data/library/supplemental-works.json`。仅使用古代词正文，不收录现代赏析、注释和译文。
+
+- 正文来源：[aopao/chinese-gushiwen 固定版本](https://github.com/aopao/chinese-gushiwen/blob/c2345d0abf2404b8b3601e4afc2e8fd12f90d6c8/guwen/guwen0-1000.json)，第 187 条。去除篇前出处说明，按上下阕分段。
+- 对照来源：[ddabb/poetryesm 固定版本](https://github.com/ddabb/poetryesm/blob/34d14ed12372b9d55406f2b66303c66cd1a3dfe0/source/明代/杨慎.json)。两份公开整理本的词正文逐字一致，可能有共同底本，不视为独立权威认证。

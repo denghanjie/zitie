@@ -1,0 +1,14 @@
+[
+  {
+    "id": "yangshen-linjiangxian",
+    "title": "临江仙·滚滚长江东逝水",
+    "author": "杨慎",
+    "text": "滚滚长江东逝水，浪花淘尽英雄。\n是非成败转头空。\n青山依旧在，几度夕阳红。\n\n白发渔樵江渚上，惯看秋月春风。\n一壶浊酒喜相逢。\n古今多少事，都付笑谈中。",
+    "collection": "历代名篇补充 · 明代",
+    "layout": "poem",
+    "sourceKind": "supplement",
+    "textNote": "据公开整理本收录词正文；去除篇前出处说明，按上下阕分段。与另一公开文本逐字对照，两来源可能存在共同底本。",
+    "sourceUrl": "https://github.com/aopao/chinese-gushiwen/blob/c2345d0abf2404b8b3601e4afc2e8fd12f90d6c8/guwen/guwen0-1000.json",
+    "sourceIndex": 187
+  }
+]
