@@ -8,12 +8,16 @@ const convert=OpenCC.Converter({from:'t',to:'cn'});
 const revision=fs.readFileSync(path.join(source,'revision.txt'),'utf8').trim();
 const sources=[['ci-extras.json','宋词','宋词补充（李清照、苏轼）','poem'],['tang.json','全唐诗/唐诗三百首.json','唐诗三百首','poem'],['ci.json','宋词/宋词三百首.json','宋词三百首','poem'],['guwen.json','蒙学/guwenguanzhi.json','古文观止','prose'],['qianjia.json','蒙学/qianjiashi.json','千家诗','poem'],['chuci.json','楚辞/chuci.json','楚辞','poem']];
 const works=[];
+function paragraphsText(parts){
+ if(!Array.isArray(parts))throw Error('Expected paragraph array');
+ return parts.map(p=>typeof p==='string'?p:paragraphsText(p.paragraphs)).join(parts.some(p=>typeof p!=='string')?'\n\n':'\n');
+}
 function leaves(obj){if(Array.isArray(obj))return obj.flatMap(leaves);if(obj&&Array.isArray(obj.paragraphs))return [obj];if(obj&&Array.isArray(obj.content)&&typeof obj.content[0]==='string')return [obj];if(obj?.content)return leaves(obj.content);return [];}
 for(const[file,upstream,collection,layout]of sources){
  const records=leaves(JSON.parse(fs.readFileSync(path.join(source,file),'utf8')));
  records.forEach((r,index)=>{
   const title=convert(r.title||r.rhythmic||r.chapter||'');const author=convert((r.author||'佚名').trim());
-  const text=convert((r.paragraphs||r.content).join('\n')).trim();
+  const text=convert(paragraphsText(r.paragraphs||r.content)).trim();
   if(!title||!text)throw Error(`Invalid record ${file}:${index}`);
   if(works.some(w=>w.title===title&&w.author===author&&w.text===text))return;
   const filePath=r._source||upstream;const sourceIndex=r._index??index;

@@ -42,3 +42,7 @@ AI_DAILY_LIMIT=100
 `GET /api/poetry/status` 返回配置状态；`POST /api/poetry/hints` 接收 `{"query":"李白梦里游仙山的诗"}`，仅返回作品候选线索。密钥留在服务端。默认单 IP 每小时 10 次、全站每天 100 次（UTC 日界），失败调用也计数；直接检索不受影响。计数存于 `/var/lib/zitie/quota.sqlite`，保留约两天，不保存查询正文。额度是应用限流，并非服务商账单硬上限。
 
 本地调试：设置 `DEEPSEEK_API_KEY` 和可写的 `ZITIE_STATE_DIR` 后运行 `python3 server/ai.py`，另一个终端 `pnpm dev`；Vite 已配置接口代理。
+
+## 教材数据更新
+
+修改 `data/textbooks/catalog.json` 和 `texts.json` 后运行 `pnpm build:textbooks`、`pnpm test`、`pnpm build`。教材数据随静态产物发布，无需更新 DeepSeek 后端。检查新版本的 `/library/textbooks.json` 能正常返回，旧版本继续保留以便回滚。

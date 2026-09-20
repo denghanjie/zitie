@@ -3,18 +3,21 @@ import{createRoot}from'react-dom/client';
 import{isHan,articleLayout,loadCharacters,paginate,pageSvg,downloadPdf}from'./worksheet';
 import './style.css';
 import PoetryPicker from './PoetryPicker';
+import TextbookPicker from './TextbookPicker';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
 function getDraft(){try{return {...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')}}catch{return example}}
 function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
- const change=(k,v)=>setDraft(d=>({...d,[k]:v}));
+ const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
+ const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
- <div className="input-tabs" role="group" aria-label="输入方式"><button type="button" aria-pressed={inputMode==='paste'} onClick={()=>setInputMode('paste')}>粘贴文字</button><button type="button" aria-pressed={inputMode==='search'} onClick={()=>setInputMode('search')}>按名称查找</button></div>
- {inputMode==='search'&&<PoetryPicker onApply={w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl}}));setInputMode('paste')}}/>}
- {draft.source&&<p className="source-note">已填入：{draft.source.author}《{draft.source.title}》 · 正文可继续修改</p>}
+ <div className="input-tabs" role="group" aria-label="输入方式"><button type="button" aria-pressed={inputMode==='paste'} onClick={()=>setInputMode('paste')}>粘贴文字</button><button type="button" aria-pressed={inputMode==='search'} onClick={()=>setInputMode('search')}>按名称查找</button><button type="button" aria-pressed={inputMode==='textbook'} onClick={()=>setInputMode('textbook')}>教材选篇</button></div>
+ {inputMode==='search'&&<PoetryPicker onApply={applyWork}/>}
+ {inputMode==='textbook'&&<TextbookPicker onApply={applyWork}/>}
+ {draft.source&&<p className="source-note">已填入：《{draft.source.title}》 · {draft.source.author}{draft.source.collection&&<> · {draft.source.collection}</>} · 正文可继续修改</p>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
- <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
+ <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
  {draft.mode==='article'&&draft.layout!=='prose'&&<label className="layout-setting">诗词断句<select aria-label="诗词断句" value={draft.lineBreak||'auto'} onChange={e=>change('lineBreak',e.target.value)}><option value="auto">自动 · 优先保留原有分行</option><option value="original">完全保留原有分行</option><option value="punctuation">按标点分句（保留空行分阕）</option></select><small>在上方文字框编辑换行；空一行即可分阕。自动识别不合适时，请选择「诗词」或「文章」。</small></label>}

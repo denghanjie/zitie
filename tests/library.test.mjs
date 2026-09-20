@@ -13,6 +13,6 @@ assert(searchWorks(works,'水调歌头').every(w=>w._title.includes('水调歌�
 assert(hintedWorks(works,[{title:'梦游天姥吟留别',author:'李白',quote:''}]).every(w=>w.author==='李白'));
 assert.equal(hintedWorks(works,[{title:'编造的无名诗词xyz',author:'不存在'}]).length,0);
 assert.equal(new Set(works.map(w=>w.id)).size,works.length);
-for(const w of works){assert(w.text.trim());assert(w.title);assert.match(w.sourceUrl,/^https:\/\/github\.com\/chinese-poetry\/chinese-poetry\/blob\/[a-f0-9]{40}\//);assert(w.sourceIndex>0);}
+for(const w of works){assert(w.text.trim());assert(!w.text.includes("[object Object]"));assert(w.title);assert.match(w.sourceUrl,/^https:\/\/github\.com\/chinese-poetry\/chinese-poetry\/blob\/[a-f0-9]{40}\//);assert(w.sourceIndex>0);}
 assert(works.some(w=>[...w.text].length>3000));
 console.log(`PASS: ${works.length} source-linked records, title/author/verse/traditional search, homonyms, AI hints cannot invent bodies.`);
