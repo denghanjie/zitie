@@ -28,7 +28,11 @@ const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 function text(s,x,y,size=14,fill='#738079',anchor='start') {
   return `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" font-family="KaiTi, STKaiti, Kaiti SC, Songti SC, serif">${esc(s)}</text>`;
 }
-function glyph(c,d,x,y,size,color,step) {
+function glyph(c,d,x,y,size,color,step,fontGlyph) {
+  if(fontGlyph&&step===undefined){
+    const {d:path,a,u}=fontGlyph;
+    return `<g transform="translate(${x+size/2} ${y+size*.82}) scale(${size*.8/u} ${-size*.8/u}) translate(${-a/2} 0)"><path d="${esc(path)}" fill="${color}"/></g>`;
+  }
   if(!d) return text(c,x+size/2,y+size*.77,size*.77,color,'middle');
   return `<g transform="translate(${x+size*.08} ${y+size*.08}) scale(${size*.84/1024} ${-size*.84/1024}) translate(0 -900)">${d.strokes.map((p,i)=>`<path d="${p}" fill="${step===undefined?color:i<step?'#606c65':i===step?'#202f27':'#eeeeeb'}"/>`).join('')}</g>`;
 }
@@ -60,14 +64,14 @@ export function paginate(input,data) {
   return page;
  });
 }
-export function pageSvg(input,data,page,index,total) {
+export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="${esc(input.title||'汉字练习')} 第${index+1}页"><rect width="794" height="1123" fill="white"/>`;
  s+=text(input.title||'汉字练习',397,77,32,'#18271e','middle');
  s+=text('姓名：____________    日期：____________',704,120,15,'#66746b','end');
  s+='<path d="M85 137H709" stroke="#d5ded7"/>';
  if(input.mode==='single') {
   for(const {c,y,h} of page){
-   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+glyph(c,data[c],85+i*105,y,97,i===0?'#202721':'#aeb3ae');
+   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+glyph(c,data[c],85+i*105,y,97,i===0?'#202721':'#aeb3ae',undefined,fontGlyphs[c]);
    s+=text('笔顺',85,y+121,12);
    const d=data[c];
    if(d) d.strokes.forEach((_,i)=>{
@@ -89,11 +93,13 @@ export function pageSvg(input,data,page,index,total) {
    for(let col=0;col<count;col++){
     const x=left+col*cell,y=page.rowY?.[r]??(top+r*(cell+gap));
     s+=grid(x,y,cell,input.grid);
-    if(row[col])s+=glyph(row[col],data[row[col]],x,y,cell,'#a8afa8');
+    if(row[col])s+=glyph(row[col],data[row[col]],x,y,cell,'#a8afa8',undefined,fontGlyphs[row[col]]);
    }
   });
  }
- s+=text('静下心，写好每一个字。',397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
+ const fontLabel={serif:'宋体',sans:'黑体'}[input.font];
+ const footer=fontLabel?`范字：${fontLabel}${input.mode==='single'?' · 笔顺示意：笔顺楷体':''}`:'静下心，写好每一个字。';
+ s+=text(footer,397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
  return s+'</svg>';
 }
 export async function downloadPdf(svgs,title,progress) {

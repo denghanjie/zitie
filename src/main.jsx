@@ -4,8 +4,9 @@ import{isHan,articleLayout,loadCharacters,paginate,pageSvg,downloadPdf}from'./wo
 import './style.css';
 import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
+import {TYPEFACES,normalizeTypeface,loadTypeface} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{return {...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')}}catch{return example}}
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return {...d,font:normalizeTypeface(d.font)}}catch{return {...example,font:'kai'}}}
 function Settings({draft,setDraft,busy,generate}){
  const [inputMode,setInputMode]=useState('paste');
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:null}:{})}));
@@ -21,6 +22,7 @@ function Settings({draft,setDraft,busy,generate}){
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
  {draft.mode==='article'&&draft.layout!=='prose'&&<label className="layout-setting">诗词断句<select aria-label="诗词断句" value={draft.lineBreak||'auto'} onChange={e=>change('lineBreak',e.target.value)}><option value="auto">自动 · 优先保留原有分行</option><option value="original">完全保留原有分行</option><option value="punctuation">按标点分句（保留空行分阕）</option></select><small>在上方文字框编辑换行；空一行即可分阕。自动识别不合适时，请选择「诗词」或「文章」。</small></label>}
+ <label className="layout-setting typeface-setting">范字字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label} · {f.description}</option>)}</select><small>{draft.mode==='single'&&draft.font&&draft.font!=='kai'?'六个范字使用所选字体；下方笔顺仍以笔顺楷体示意。':'初学建议选笔顺楷体；宋体、黑体适合感受不同的字形结构。'} 选择后点击「生成字帖」更新。</small></label>
  <fieldset><legend>字格类型</legend><div className="grid-options">{[['tian','田字格','田'],['mi','米字格','米']].map(([v,t,g])=><button type="button" key={v} className={draft.grid===v?'selected':''} aria-pressed={draft.grid===v} onClick={()=>change('grid',v)}><span className="grid-icon">{g}</span>{t}</button>)}</div></fieldset>
  <label className="section-title" htmlFor="title">字帖标题</label><input id="title" maxLength={24} value={draft.title} onChange={e=>change('title',e.target.value)} placeholder="汉字练习"/>
  <button className="primary generate" disabled={busy} type="submit">{busy?'正在生成…':'生成字帖'}</button>
@@ -38,14 +40,22 @@ function App(){
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
   setBusy(true);setMessage('正在准备字形和笔顺…');
   try{
-   const input={...draft};const data=await loadCharacters(input.content);
+   const input={...draft,font:normalizeTypeface(draft.font)};
+   const [data,fontGlyphs]=await Promise.all([loadCharacters(input.content),loadTypeface(input.font,input.content)]);
    const layoutInfo=input.mode==='article'?articleLayout(input):null;
    const layoutNote=layoutInfo?.poetry?`诗词排版 · ${layoutInfo.breakMode} · 空行分阕。 `:'';
-   const pages=paginate(input,data);const svgs=pages.map((p,i)=>pageSvg(input,data,p,i,pages.length));
-   const missing=Object.keys(data).filter(c=>!data[c]);
+   const pages=paginate(input,data);const svgs=pages.map((p,i)=>pageSvg(input,data,p,i,pages.length,fontGlyphs));
+   const fontName=TYPEFACES.find(f=>f.id===input.font).label;
+   const shapeMissing=Object.keys(data).filter(c=>!data[c]&&!fontGlyphs[c]);
+   const strokeMissing=input.mode==='single'?Object.keys(data).filter(c=>!data[c]):[];
+   const fontMissing=input.font==='kai'?[]:Object.keys(data).filter(c=>!fontGlyphs[c]);
    setResult({input,svgs});setPage(0);
-   setMessage(layoutNote+(missing.length?`已生成 ${pages.length} 页。「${missing.slice(0,15).join('、')}」等 ${missing.length} 个字暂无字形数据，已使用系统字体${input.mode==='single'?'，并在纸上标注缺失笔顺':''}。`:`已生成 ${pages.length} 页，所有汉字字形${input.mode==='single'?'与笔顺':''}已就绪。`));
-  }catch(e){setMessage('生成失败，请稍后重试。');console.error(e)}finally{setBusy(false)}
+   const notes=[layoutNote+`${fontName} · 已生成 ${pages.length} 页。`];
+   if(fontMissing.length)notes.push(`「${fontMissing.slice(0,10).join('、')}」等 ${fontMissing.length} 个字不在所选字体中，改用笔顺字形或系统字体。`);
+   if(shapeMissing.length)notes.push(`「${shapeMissing.slice(0,10).join('、')}」等 ${shapeMissing.length} 个字暂无矢量字形，已使用系统字体。`);
+   if(strokeMissing.length)notes.push(`${strokeMissing.length} 个字暂无笔顺，已在纸上标注。`);
+   setMessage(notes.join(' '));
+  }catch(e){setError(e.message?.startsWith('字体加载失败')?e.message:'生成失败，请稍后重试。');console.error(e)}finally{setBusy(false)}
  }
  useEffect(()=>{if(!initialized.current){initialized.current=true;generate()}},[]);
  const dirty=result&&JSON.stringify(draft)!==JSON.stringify(result.input);

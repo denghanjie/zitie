@@ -1,0 +1,1276 @@
+{
+  "version": "fontsource-5.3.0",
+  "fonts": {
+    "serif": {
+      "glyphCount": 13661,
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        60,
+        61,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        82,
+        86,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        103,
+        104,
+        105,
+        106,
+        107,
+        109,
+        113,
+        123,
+        124,
+        126,
+        137,
+        142,
+        145,
+        153,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255,
+        256,
+        257,
+        258,
+        259,
+        260,
+        261,
+        262,
+        263,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        498,
+        499,
+        500,
+        502,
+        508,
+        510,
+        511,
+        994,
+        995,
+        996
+      ],
+      "files": [
+        {
+          "file": "noto-serif-sc-100-400-normal.woff2",
+          "sha256": "5209f425a967af6bd798702015dce9ffecc6d46817385ecd8c4cd5796db02de0"
+        },
+        {
+          "file": "noto-serif-sc-101-400-normal.woff2",
+          "sha256": "fb801f29c9aaacdf009804efe33ce3124f68e7fe4317452c66fa09f0ccd917df"
+        },
+        {
+          "file": "noto-serif-sc-102-400-normal.woff2",
+          "sha256": "e07bb10e282b122ac725d75cdbdc482f89680cdce71ad773083413f667c42b3b"
+        },
+        {
+          "file": "noto-serif-sc-103-400-normal.woff2",
+          "sha256": "155371bb76e3093a5872ac26fa1b094490d6e707609c703880c9ce5e85372858"
+        },
+        {
+          "file": "noto-serif-sc-104-400-normal.woff2",
+          "sha256": "b7c1d975242591387cebb09a4b96f799270d14430122ae849378b939a465d67c"
+        },
+        {
+          "file": "noto-serif-sc-105-400-normal.woff2",
+          "sha256": "b05da70aec9bf352fb77b3a07e5477c95587eb836a720943460a49d8fffc84d2"
+        },
+        {
+          "file": "noto-serif-sc-106-400-normal.woff2",
+          "sha256": "d422930c709712dd04b9b96bd17c256d38cc87baf2834cf11e73805d396517d4"
+        },
+        {
+          "file": "noto-serif-sc-107-400-normal.woff2",
+          "sha256": "03dcbdce956242b7442533a0b4846c2fac6d93a11253bdb05ce0397a927fbbdb"
+        },
+        {
+          "file": "noto-serif-sc-108-400-normal.woff2",
+          "sha256": "a9d450627989c9e65347e9ea95146034f15d168b74285e84e8a23d256c3ef28c"
+        },
+        {
+          "file": "noto-serif-sc-109-400-normal.woff2",
+          "sha256": "e16a579d7e3f6ce1bf4244544955cc9960cd2f12f359b279303e68b9f94108f3"
+        },
+        {
+          "file": "noto-serif-sc-110-400-normal.woff2",
+          "sha256": "cd4f2bb208b10081fac6d57cb1bc470faa60b3914f1f6ffa56840bc72709e8ce"
+        },
+        {
+          "file": "noto-serif-sc-111-400-normal.woff2",
+          "sha256": "781006ca8d5463354fb6fde2b118875a6da699b1796ce22be3abc003777b6b71"
+        },
+        {
+          "file": "noto-serif-sc-112-400-normal.woff2",
+          "sha256": "8b2392a29608a069b9636467ec19a0aed362671d8a4f3dd403b5dd13926cbc2a"
+        },
+        {
+          "file": "noto-serif-sc-113-400-normal.woff2",
+          "sha256": "a39469f99e4d3b6e269ff700d8b2edc0bea839d0c46cf43d0c1a1c8a71ad8dc7"
+        },
+        {
+          "file": "noto-serif-sc-114-400-normal.woff2",
+          "sha256": "70c38bdf292733a2167b8091110fc650442b9888cece984552ec6c90775b0e22"
+        },
+        {
+          "file": "noto-serif-sc-115-400-normal.woff2",
+          "sha256": "748c49190e86b707a177ae62ee0de98f0dbbe53f4e72347f09e530d3df50eaf8"
+        },
+        {
+          "file": "noto-serif-sc-116-400-normal.woff2",
+          "sha256": "e4e121ebf09a9d498d52965c0b85e404426fdfc94cbf633f2a51f65df3b0be6c"
+        },
+        {
+          "file": "noto-serif-sc-117-400-normal.woff2",
+          "sha256": "f59d441e134db8751d4438ed90daebae7488c1b514037f738cbf5c0068c5af55"
+        },
+        {
+          "file": "noto-serif-sc-118-400-normal.woff2",
+          "sha256": "4c4cd6ef1dbb4d83c22b0b63664c73f1420c3457c625a5757fc3e591b127bac4"
+        },
+        {
+          "file": "noto-serif-sc-119-400-normal.woff2",
+          "sha256": "7d438466bfc51d35d4a7a0076c428dee5fc5de927f3534456994d46848306077"
+        },
+        {
+          "file": "noto-serif-sc-21-400-normal.woff2",
+          "sha256": "198318a26fef917346dd6ed4c78da03f1c5760a04ca865b70f414183890ebba0"
+        },
+        {
+          "file": "noto-serif-sc-22-400-normal.woff2",
+          "sha256": "68cf19eb70c5a1cad04ba1eb7b89231843e12aab918963c898b7e744e87e726f"
+        },
+        {
+          "file": "noto-serif-sc-23-400-normal.woff2",
+          "sha256": "31deec0c69ec5cb783a3a7746bc03e4cb9fec134303cb5a02170ad1eb65cbd4c"
+        },
+        {
+          "file": "noto-serif-sc-24-400-normal.woff2",
+          "sha256": "74edac9ceae09ba64ec6c5029a45a768dcfa40a4b6cce51c8b0418150b18c384"
+        },
+        {
+          "file": "noto-serif-sc-25-400-normal.woff2",
+          "sha256": "20b2e93a5303c61e6b0e44dfa042f994d82c3ad07f516cf597ed9dcd7beec66e"
+        },
+        {
+          "file": "noto-serif-sc-26-400-normal.woff2",
+          "sha256": "ee1c7471882eaf5709ad479d849bcc70eef214803732bdfb8dd56fd502e132dd"
+        },
+        {
+          "file": "noto-serif-sc-27-400-normal.woff2",
+          "sha256": "04a269894c40bda831579d523c916d592937a71c81be01cc5334368c7b5d5bca"
+        },
+        {
+          "file": "noto-serif-sc-28-400-normal.woff2",
+          "sha256": "6d6246c6fd7a03e5eee9ccbbae5a0bf67ff9624535575e2a34a7bb1d10b3d862"
+        },
+        {
+          "file": "noto-serif-sc-29-400-normal.woff2",
+          "sha256": "2b99bfe3ebbbee489e29e6e7261bd43911b4fef73f567c40fb046726d6e1fba5"
+        },
+        {
+          "file": "noto-serif-sc-30-400-normal.woff2",
+          "sha256": "d64a121cdd32be0a6e82bec5a9c918893ea9537f07a8bb2f10e6a6654bb2f598"
+        },
+        {
+          "file": "noto-serif-sc-31-400-normal.woff2",
+          "sha256": "a888b15fb48d49247cfbaee526993f75b6c118573b4a1664560f34998940274c"
+        },
+        {
+          "file": "noto-serif-sc-32-400-normal.woff2",
+          "sha256": "286168fa3f8c3ff0393f7be781beedb78d319703458e84233d490b91427cb064"
+        },
+        {
+          "file": "noto-serif-sc-33-400-normal.woff2",
+          "sha256": "668cb1a991576f49da8bb311efb227e888752b05d4a5983d39fab70b5e056d6f"
+        },
+        {
+          "file": "noto-serif-sc-34-400-normal.woff2",
+          "sha256": "66c35dc76153487b017608264634ea093981271548c59aaa394772ed08c81e73"
+        },
+        {
+          "file": "noto-serif-sc-35-400-normal.woff2",
+          "sha256": "550c508b2da2f686ad407094fc61abb8ca4955579a2a651296e4687df991eebd"
+        },
+        {
+          "file": "noto-serif-sc-36-400-normal.woff2",
+          "sha256": "e3e327821de43568afbf311b9a52234c28e34a5eac2969d7bde522704dd11ce7"
+        },
+        {
+          "file": "noto-serif-sc-37-400-normal.woff2",
+          "sha256": "53b49f61dc76d9ec3e302fc4d2e64f1cdf81ec61902f7216e58d68f348972973"
+        },
+        {
+          "file": "noto-serif-sc-38-400-normal.woff2",
+          "sha256": "0ed19348b9acc0d78251a9358dfcd406f1e68d86ed3d3080dcf2352042e37131"
+        },
+        {
+          "file": "noto-serif-sc-39-400-normal.woff2",
+          "sha256": "27e6d1a3e8135ddcd1bcac7dd2de96fb40a43efc38d84e414b802e2bafcb66a2"
+        },
+        {
+          "file": "noto-serif-sc-4-400-normal.woff2",
+          "sha256": "70b69aa90209f7390276e8dfdf3a8ef8ba20a7845be107ebf0aa988a13e1c6ca"
+        },
+        {
+          "file": "noto-serif-sc-40-400-normal.woff2",
+          "sha256": "1b5b7e6eba0a7a95f142349a9a214f55c30b025183a5ddc64e364ac6e5472b1e"
+        },
+        {
+          "file": "noto-serif-sc-41-400-normal.woff2",
+          "sha256": "f97119290ab53f15ddcf931c20f89ac822787b59fcbde8439bca09ff9ba77405"
+        },
+        {
+          "file": "noto-serif-sc-42-400-normal.woff2",
+          "sha256": "cb42250607c16ac6644ad2bfcb783c3355ede2fd3834cc2d5cd9c2e343d2ce6d"
+        },
+        {
+          "file": "noto-serif-sc-43-400-normal.woff2",
+          "sha256": "b5b61d6a1157229150ff66d1d2997ff72d0e6722e92e05ba7b3ebe716b36a2da"
+        },
+        {
+          "file": "noto-serif-sc-44-400-normal.woff2",
+          "sha256": "c79ebadffcbc63731481f32fb59c3690e776cd0dea07bc3bc920c9f58573f6ea"
+        },
+        {
+          "file": "noto-serif-sc-45-400-normal.woff2",
+          "sha256": "674be02327f6b5489cbe5d5cc9c8fddba0604b359523d25d3cc6c98d11742a28"
+        },
+        {
+          "file": "noto-serif-sc-46-400-normal.woff2",
+          "sha256": "0931bf8ea722d78f80595729507547f67e4b45344ef8b21381c20cdcd32be2bf"
+        },
+        {
+          "file": "noto-serif-sc-47-400-normal.woff2",
+          "sha256": "32e1b98d5994e97170930a6f8b833715ea3965dd2a1415fcd6046e96c7055433"
+        },
+        {
+          "file": "noto-serif-sc-48-400-normal.woff2",
+          "sha256": "087d91daec02168b3fbfc2d4cbd9dcf9e7b6edf262c2e58abc12ceee4da9253a"
+        },
+        {
+          "file": "noto-serif-sc-49-400-normal.woff2",
+          "sha256": "85ac5231f9a586452eeb6b5b23198e547dcc18fc6903755d7ff87a2af5bdc7ef"
+        },
+        {
+          "file": "noto-serif-sc-5-400-normal.woff2",
+          "sha256": "2aadb8d018f6b5fed489dd9c9ee9c34dee849807504988b806c28122928a78e4"
+        },
+        {
+          "file": "noto-serif-sc-50-400-normal.woff2",
+          "sha256": "a914664a32e633cb38770d83feb472e90e4ace016ccafb0634f3e4f9ded0d6ec"
+        },
+        {
+          "file": "noto-serif-sc-51-400-normal.woff2",
+          "sha256": "dadb6d424a9bd9264082a0fcb522cd1b92b74126f6508d125a549c6a52a2f306"
+        },
+        {
+          "file": "noto-serif-sc-52-400-normal.woff2",
+          "sha256": "8fbd3b1114a2d94c6166d85dc093f43487def661be2fdc369c4207d1ad681344"
+        },
+        {
+          "file": "noto-serif-sc-53-400-normal.woff2",
+          "sha256": "d02835c0c38db449e5bdc5d02e3cdee9a98c5a83668db45ea4c3ceedeb26ad98"
+        },
+        {
+          "file": "noto-serif-sc-54-400-normal.woff2",
+          "sha256": "60e16a0fc5c4b5b056334b1217802a9e06d2a56cd37a1b75ac9ed72c63246e8f"
+        },
+        {
+          "file": "noto-serif-sc-55-400-normal.woff2",
+          "sha256": "9335e5aa92ad3ef8b200e7816cc4a09848be9ead6178319db16c22cd3d63da02"
+        },
+        {
+          "file": "noto-serif-sc-56-400-normal.woff2",
+          "sha256": "32064b13723da0ce323148eabc3aead3cd3123d41cb6f020f08c0d818a0d6a5c"
+        },
+        {
+          "file": "noto-serif-sc-57-400-normal.woff2",
+          "sha256": "c719a170320a936006435ef3b866396ccb3240f095e6192cd1a9676a45364913"
+        },
+        {
+          "file": "noto-serif-sc-58-400-normal.woff2",
+          "sha256": "7db027f41d886ba883186df4149118bf2bd67d209fa20e6b35cead28ec00b2ef"
+        },
+        {
+          "file": "noto-serif-sc-59-400-normal.woff2",
+          "sha256": "0a274c73d62090bcd19ce602b70333b65a2949ffff0fb58a9c0764c28b14eea6"
+        },
+        {
+          "file": "noto-serif-sc-6-400-normal.woff2",
+          "sha256": "7fab1516bb96d2bfd65f2d67eadb3ba14fe745232f613ea7e7afe7d713556dbf"
+        },
+        {
+          "file": "noto-serif-sc-60-400-normal.woff2",
+          "sha256": "c4d16a9a50ff199e3fb1f724e4de1554d988125d5b9f82e2141cd96d8a099009"
+        },
+        {
+          "file": "noto-serif-sc-61-400-normal.woff2",
+          "sha256": "bc969adb767ff5c0da99b82efc653ea11200cfec96a7acd21202ad780c24ffdb"
+        },
+        {
+          "file": "noto-serif-sc-62-400-normal.woff2",
+          "sha256": "1d36caa852ee220398f9a65ad101a67b24fcc7a113146a0d1db6aa0b1d5d7313"
+        },
+        {
+          "file": "noto-serif-sc-63-400-normal.woff2",
+          "sha256": "7dbf09a682a4e05cc0de4c5fe93a79d3bdc6053147f29a21f295da532e5e26e5"
+        },
+        {
+          "file": "noto-serif-sc-64-400-normal.woff2",
+          "sha256": "1bd4082ecf77eca7a90b0d8f2bed3757ea13268fb0fc693d6b46653aec202e72"
+        },
+        {
+          "file": "noto-serif-sc-65-400-normal.woff2",
+          "sha256": "8c63cc77c1d220108f47708b6806eddb56da5fddc877d2e8f8bed9f592e82719"
+        },
+        {
+          "file": "noto-serif-sc-66-400-normal.woff2",
+          "sha256": "c4afcce8095fbb98cdfee097ffaeacd4f5bf6692d4b655ff3fc82651a8199937"
+        },
+        {
+          "file": "noto-serif-sc-67-400-normal.woff2",
+          "sha256": "4984939cfbdf151cde1a5108c294d310e749def5d91af0f3b1b3495eb963a5fa"
+        },
+        {
+          "file": "noto-serif-sc-68-400-normal.woff2",
+          "sha256": "28302b1b4d060e430cf017b32df943740cdfb5a9bc34e4e7f9998db0f5aeb051"
+        },
+        {
+          "file": "noto-serif-sc-69-400-normal.woff2",
+          "sha256": "d4be17011f92b819855d0fc092230c0eb13baad1be4bd17d9b6bd9b0ee8ebd6b"
+        },
+        {
+          "file": "noto-serif-sc-70-400-normal.woff2",
+          "sha256": "c257f9abfc8b90cae12396c85fdb0bd69f3feb09ab1935faab7bbc67e4b89512"
+        },
+        {
+          "file": "noto-serif-sc-71-400-normal.woff2",
+          "sha256": "99b09b56badaabbd842d58a0b48905b2b62eb8dc91514081264247c1eebaf102"
+        },
+        {
+          "file": "noto-serif-sc-72-400-normal.woff2",
+          "sha256": "ce64b49d6f171ff84ab32e47a8846dd08c2492fd51ee1f4a010f86e5cd07ef2e"
+        },
+        {
+          "file": "noto-serif-sc-73-400-normal.woff2",
+          "sha256": "4f7bc6b6b51b96c5d7107a4b1476e4d6136ff0b019a0adf5c028eec37d3175b7"
+        },
+        {
+          "file": "noto-serif-sc-74-400-normal.woff2",
+          "sha256": "7b8dd20a7927cc71bee8cfea0555909a93172423e62b18c84b3dcf9dd173d34b"
+        },
+        {
+          "file": "noto-serif-sc-75-400-normal.woff2",
+          "sha256": "cd9fa7f2609359dd37475cf265ea8d0e2faa146aff777d0068290e9747ef3017"
+        },
+        {
+          "file": "noto-serif-sc-76-400-normal.woff2",
+          "sha256": "9513ffe226cad7bee226ef503eeb32733443530882cd9dbd628fcc54ab066533"
+        },
+        {
+          "file": "noto-serif-sc-77-400-normal.woff2",
+          "sha256": "9d298d19de6fa484d53e9fc566a784320d3a34b9dac7f96e60a8e7afd97f28dc"
+        },
+        {
+          "file": "noto-serif-sc-78-400-normal.woff2",
+          "sha256": "f1b0994f0406bf6f01cd31ea312cbf2f7e114e224053f6040a57a3720066bbce"
+        },
+        {
+          "file": "noto-serif-sc-79-400-normal.woff2",
+          "sha256": "f08743b215770a2dc231e056d0128b8a5b607985e2aabbeb76a19a8d0df455ad"
+        },
+        {
+          "file": "noto-serif-sc-80-400-normal.woff2",
+          "sha256": "032133d339d581d98340adf3ee80873501ce838abfc0ad9b8d2e87d90cf2f273"
+        },
+        {
+          "file": "noto-serif-sc-81-400-normal.woff2",
+          "sha256": "72b8d3706a36345da7281d52b8e1402646541a2a873059443a825e6ac21fe0c9"
+        },
+        {
+          "file": "noto-serif-sc-82-400-normal.woff2",
+          "sha256": "f2fd134835797badf5edb26ff2513507cf67827b0503b53493c4a07a3543acb1"
+        },
+        {
+          "file": "noto-serif-sc-83-400-normal.woff2",
+          "sha256": "4e65935907a097807dcbc71ab80d0ac87ece0c60e09437c85e79546cc0e3c966"
+        },
+        {
+          "file": "noto-serif-sc-84-400-normal.woff2",
+          "sha256": "1402df11d4b72efc3d38950afb081a291f789972c6b50a61ac5e58f880b71a44"
+        },
+        {
+          "file": "noto-serif-sc-85-400-normal.woff2",
+          "sha256": "5f82871e558477f3b479dad534993f2bc5b41aa99cf8bb867a2bbe7ccc3b5569"
+        },
+        {
+          "file": "noto-serif-sc-86-400-normal.woff2",
+          "sha256": "7fb9b4a84d1f9cfbee518496d70c9623218791a07f95ac2a1d4980b46232fc1c"
+        },
+        {
+          "file": "noto-serif-sc-87-400-normal.woff2",
+          "sha256": "038988b9ce055fe20e1fb309fa28e21dd1667460940f492349f3aa3ff4ae37a0"
+        },
+        {
+          "file": "noto-serif-sc-88-400-normal.woff2",
+          "sha256": "2b9a72a0157f70b1e4b257d0aa13d701597c6ea375063fd3d07f24e4c37673b8"
+        },
+        {
+          "file": "noto-serif-sc-89-400-normal.woff2",
+          "sha256": "5bd78eaa1e1a17f42075daf692695bb13f9f246b56283ac1933d79d1f4a5b80f"
+        },
+        {
+          "file": "noto-serif-sc-90-400-normal.woff2",
+          "sha256": "092b908aedd7b6519bde9089c1ac420741875099f8289c0f82d546f8324592e9"
+        },
+        {
+          "file": "noto-serif-sc-91-400-normal.woff2",
+          "sha256": "b143c83177a86fd18baa9eb9565803a8853406a0d52144d88a0e88ebd632a620"
+        },
+        {
+          "file": "noto-serif-sc-97-400-normal.woff2",
+          "sha256": "7dff162a55902117310b7b2938d2754df36a2b718499ce7e30bbd73448835680"
+        },
+        {
+          "file": "noto-serif-sc-98-400-normal.woff2",
+          "sha256": "7cee9b36e6eceafdf0ac327e8d6b2825b581033460a4c5bfa964f2a2ca23811b"
+        },
+        {
+          "file": "noto-serif-sc-99-400-normal.woff2",
+          "sha256": "648e7d3f5a03ba9f9b49804e474220dd155d31e1b2b5b3ee7bd4772717cf3bcf"
+        },
+        {
+          "file": "noto-serif-sc-cyrillic-400-normal.woff2",
+          "sha256": "22c78938835f757b4b1d2a99cde0fc731c206d5681eb98dd5199bfd600cd9fff"
+        },
+        {
+          "file": "noto-serif-sc-latin-400-normal.woff2",
+          "sha256": "af0c95a3e897cfab6a319a789f203dc64b8f81574f8113c7d46240db68c8ff8f"
+        },
+        {
+          "file": "noto-serif-sc-latin-ext-400-normal.woff2",
+          "sha256": "ff6d9a53e368c9cb7ef501c7c71bcbc00349c7eb0d7fad0d1ca806f8faa26c7e"
+        },
+        {
+          "file": "noto-serif-sc-vietnamese-400-normal.woff2",
+          "sha256": "992ce1137e064f4ba4384533d84f0a07af2b7ed72e447f632be14cea07c63436"
+        }
+      ]
+    },
+    "sans": {
+      "glyphCount": 13630,
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        60,
+        61,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        82,
+        86,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        103,
+        104,
+        105,
+        106,
+        107,
+        109,
+        113,
+        123,
+        124,
+        126,
+        137,
+        142,
+        145,
+        153,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255,
+        256,
+        257,
+        258,
+        259,
+        260,
+        261,
+        262,
+        263,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        498,
+        499,
+        500,
+        502,
+        508,
+        510,
+        511,
+        994,
+        995,
+        996
+      ],
+      "files": [
+        {
+          "file": "noto-sans-sc-100-400-normal.woff2",
+          "sha256": "597b821e126e722b3d0627dbfe2e39bdfdb3c7a8f2b6ced3473775c701551a67"
+        },
+        {
+          "file": "noto-sans-sc-101-400-normal.woff2",
+          "sha256": "8eef1fa6b5557ee00c1451df31ff4f56833a8460494446d943a8228d4daf9f72"
+        },
+        {
+          "file": "noto-sans-sc-102-400-normal.woff2",
+          "sha256": "357be17c54c5bec1de5b00083811b9121707382705635d1a0ef5c3427451e656"
+        },
+        {
+          "file": "noto-sans-sc-103-400-normal.woff2",
+          "sha256": "de0d9bc6e0e5d3b337ca93b5189a2a235b0f74dcfa58c94f9d9a8e1ccdf2483a"
+        },
+        {
+          "file": "noto-sans-sc-104-400-normal.woff2",
+          "sha256": "ef41ce86145108505d0c6f229229791ca8771d088a4d1c5a37840031adb5f0c7"
+        },
+        {
+          "file": "noto-sans-sc-105-400-normal.woff2",
+          "sha256": "0404d02207b7b072a32d9becab37de3420a8f31266978d756d0e1225301f6888"
+        },
+        {
+          "file": "noto-sans-sc-106-400-normal.woff2",
+          "sha256": "6f1efc3f7a993358a56290ea16b4e241d3618f2791733209ef332737d2b1ac5d"
+        },
+        {
+          "file": "noto-sans-sc-107-400-normal.woff2",
+          "sha256": "6d4a79aff3792b5dd83aad78768e050c9e5cad336c6db1a6932b33db15a06664"
+        },
+        {
+          "file": "noto-sans-sc-108-400-normal.woff2",
+          "sha256": "b1a0d456ebff097f0ef909ea1d0680a993ee018e0c8a319c77576abacdccc22c"
+        },
+        {
+          "file": "noto-sans-sc-109-400-normal.woff2",
+          "sha256": "7a7980f80559bb36dfff4ea64e9b03d926c98566fb7326181569ac1e8334b717"
+        },
+        {
+          "file": "noto-sans-sc-110-400-normal.woff2",
+          "sha256": "e4d24ba921e93102c2b198187e4e0ed507aafd07e5cd6de032d5df7b76ee044b"
+        },
+        {
+          "file": "noto-sans-sc-111-400-normal.woff2",
+          "sha256": "f20ccaeab7d4244e651e6cac4296c2a26403108e70e8db5ac105b474670f1c28"
+        },
+        {
+          "file": "noto-sans-sc-112-400-normal.woff2",
+          "sha256": "6624c02437475caaf043f015208ef74c74e8fe8633d54ae1d5fc3a9ed38e7ea0"
+        },
+        {
+          "file": "noto-sans-sc-113-400-normal.woff2",
+          "sha256": "f2fd94429f722da169fb4b0a3a132ef5bf92d0b0aa3ae3426006446d50994c36"
+        },
+        {
+          "file": "noto-sans-sc-114-400-normal.woff2",
+          "sha256": "d58ca6082d43993a894bcee72181b98527d3ef003099ba61146e3df4883a7be2"
+        },
+        {
+          "file": "noto-sans-sc-115-400-normal.woff2",
+          "sha256": "d83b8291340e0024c8a573afe48b60ce22ed00d87619a7f3950b2193d19af6c9"
+        },
+        {
+          "file": "noto-sans-sc-116-400-normal.woff2",
+          "sha256": "5744f8001a3e231990bd1fe87b080bdd4b4d0e658c84a3bcdb5555e57e32661a"
+        },
+        {
+          "file": "noto-sans-sc-117-400-normal.woff2",
+          "sha256": "bf7c1b4b8b0d1110c761720b977d237d350130d29db48aea0bc5189f572dad3d"
+        },
+        {
+          "file": "noto-sans-sc-118-400-normal.woff2",
+          "sha256": "b6be37866f0d950777a6ce2ab417aba11acc3c52786072b0d760da2a277cd248"
+        },
+        {
+          "file": "noto-sans-sc-119-400-normal.woff2",
+          "sha256": "190237c828b2ea0f076bd1a4a1e6bbd7365e56a5ef837042e35763585250b3ac"
+        },
+        {
+          "file": "noto-sans-sc-21-400-normal.woff2",
+          "sha256": "7af32afb6e5bc5c002758143cfa3e780f300740ce2101f95995f90c51ca07e01"
+        },
+        {
+          "file": "noto-sans-sc-22-400-normal.woff2",
+          "sha256": "ffecbf6ea4b0e598abaa72dc50f0b1cbbde6de4b89f3400853e51cda18b2b03e"
+        },
+        {
+          "file": "noto-sans-sc-23-400-normal.woff2",
+          "sha256": "635735a1ff65f4117480fdd5539a9e82527525ed3415316ee1e4a112f55074e1"
+        },
+        {
+          "file": "noto-sans-sc-24-400-normal.woff2",
+          "sha256": "cd55851f977ad169931a3dadb030baf28b0ddca4ebed5db3dc768e36024f39ff"
+        },
+        {
+          "file": "noto-sans-sc-25-400-normal.woff2",
+          "sha256": "81fa8ca5bacbda6e6d78cfcdcb43cb714b16efa4b5a080614fbf9c8188e23c19"
+        },
+        {
+          "file": "noto-sans-sc-26-400-normal.woff2",
+          "sha256": "1ff769bd29425085aadb50467fcec022eb8b749019af66765b780e9a0f7cc969"
+        },
+        {
+          "file": "noto-sans-sc-27-400-normal.woff2",
+          "sha256": "d3b6a5f1526dde1ecab11dba6a654e0884142e6424326e461b8f4056227338f7"
+        },
+        {
+          "file": "noto-sans-sc-28-400-normal.woff2",
+          "sha256": "013a27d2ea2d3330344f82447df2160c3075fe2cc21d45bd24ade319fb2cafde"
+        },
+        {
+          "file": "noto-sans-sc-29-400-normal.woff2",
+          "sha256": "9a15d9ca2b3a0e2d3a3decbd923aab1b28c08cbe04d6ddaa0fc486210180b0db"
+        },
+        {
+          "file": "noto-sans-sc-30-400-normal.woff2",
+          "sha256": "564a1aaea728633fbe7aa09b5bb43d43dd9ee3bdac8a600f031f2a761edd5e99"
+        },
+        {
+          "file": "noto-sans-sc-31-400-normal.woff2",
+          "sha256": "18a82abced21f95dd62e67dab46c3612f4efe4acf4ba49bc699e0ef8a56a8e29"
+        },
+        {
+          "file": "noto-sans-sc-32-400-normal.woff2",
+          "sha256": "5ce8d305e655b53de2b9b59c63c848775150789c8e983db68caeab86740c2e1a"
+        },
+        {
+          "file": "noto-sans-sc-33-400-normal.woff2",
+          "sha256": "bb8182f884d9a84289713b2d7c15115c36ee0a9be4f695596ecd6c9670b22d44"
+        },
+        {
+          "file": "noto-sans-sc-34-400-normal.woff2",
+          "sha256": "0b08cfec4dfe8f751b4b2e7dd30fb52983754840891fa5c0fcf625214184d11f"
+        },
+        {
+          "file": "noto-sans-sc-35-400-normal.woff2",
+          "sha256": "65e8c613cbad5188cf0e9a9bb9efa8f0a6c1cf6d3c479dd34bf557d3da28ed7b"
+        },
+        {
+          "file": "noto-sans-sc-36-400-normal.woff2",
+          "sha256": "b0b1daf10780e6c6e4ee7c9c63dda6e9abc979310f28ff6c55a97329927bce95"
+        },
+        {
+          "file": "noto-sans-sc-37-400-normal.woff2",
+          "sha256": "9c4e7b148a74989bbd9ccb983cd34d8d37377245d1b091ca246ea9592badfcd8"
+        },
+        {
+          "file": "noto-sans-sc-38-400-normal.woff2",
+          "sha256": "f588ebfd432fb8574d7111c3115170717c3ae0785b88688251e92aa8d6a2ca23"
+        },
+        {
+          "file": "noto-sans-sc-39-400-normal.woff2",
+          "sha256": "a678dc9faf6674688fe4f74866bddc4155f0091ac4058e112074a619fc08004c"
+        },
+        {
+          "file": "noto-sans-sc-4-400-normal.woff2",
+          "sha256": "ed2fe4daa3dde221f92e9d6ce967101b850bdff9d17065689070dc2650040518"
+        },
+        {
+          "file": "noto-sans-sc-40-400-normal.woff2",
+          "sha256": "d1f0c930082af4cae9a7889dd2da82b43fbb58a3b5ebfaff7b8d3e40e8d2cff0"
+        },
+        {
+          "file": "noto-sans-sc-41-400-normal.woff2",
+          "sha256": "22b84cdfc5b47dcbf764478369109f9ec1a8c66d7963cf30dfc57de3abd64f42"
+        },
+        {
+          "file": "noto-sans-sc-42-400-normal.woff2",
+          "sha256": "525eef80cf1b1fe2659167daa83bb853f83b643c5828f4cafb6d60aeb554ef6d"
+        },
+        {
+          "file": "noto-sans-sc-43-400-normal.woff2",
+          "sha256": "4326187b4e1370d12785707338cd16ba06eb7fc3bf866a7b8cb4087f71d666bd"
+        },
+        {
+          "file": "noto-sans-sc-44-400-normal.woff2",
+          "sha256": "e0812601cf62c3ed71199189e20378c00dc567a12cbe05377098c2b9de903bd3"
+        },
+        {
+          "file": "noto-sans-sc-45-400-normal.woff2",
+          "sha256": "b7f880a03391f72ea94333e2a4506d3ff6d651de4668ad8e92ceaefbba5264de"
+        },
+        {
+          "file": "noto-sans-sc-46-400-normal.woff2",
+          "sha256": "332fc0db2f10a3fdce94edf5caf5632d94f95ce6cd3715e1ee8d032a1e4d5669"
+        },
+        {
+          "file": "noto-sans-sc-47-400-normal.woff2",
+          "sha256": "31087e9afdd6b4d9a3b87054e06d9e1a357c5c7622f53d06a873dcbe89cab1ed"
+        },
+        {
+          "file": "noto-sans-sc-48-400-normal.woff2",
+          "sha256": "567c513b94ef3e986099ba0abb2ce6cd148d1a7725f86e5f1ba941fc45b829cd"
+        },
+        {
+          "file": "noto-sans-sc-49-400-normal.woff2",
+          "sha256": "5d33063a54f945d0d985e9da540f5abe2b6ad3a968da3367b872b5cd7efc2fc4"
+        },
+        {
+          "file": "noto-sans-sc-5-400-normal.woff2",
+          "sha256": "c875a169469fae4dfab49cb63ae1e5ceab706ea083b44a27ae89da93bb021c1d"
+        },
+        {
+          "file": "noto-sans-sc-50-400-normal.woff2",
+          "sha256": "28208e128052edc267e874112fd7dd5f15f4fead0e2d93300a7421b8ffebba0a"
+        },
+        {
+          "file": "noto-sans-sc-51-400-normal.woff2",
+          "sha256": "566e608c80f851b7d830c2c85770790b7d6b3d4c532501a7c7d3edd99613fc3a"
+        },
+        {
+          "file": "noto-sans-sc-52-400-normal.woff2",
+          "sha256": "576dd5abc648c087d61168a9df804b6f94e3c8dcca32a52d3b1596326b8cd70c"
+        },
+        {
+          "file": "noto-sans-sc-53-400-normal.woff2",
+          "sha256": "8e8000bc63050f471435f43951bcf049974c9e771bd999c482ddd36fb9b26516"
+        },
+        {
+          "file": "noto-sans-sc-54-400-normal.woff2",
+          "sha256": "153bd830dcd1700d3ddba1bf030cc7886b336fbfc9182e0991263386578ad989"
+        },
+        {
+          "file": "noto-sans-sc-55-400-normal.woff2",
+          "sha256": "382d83fc17c0ff8051267bdb25518b8579149186658b4980ae0a591a46dae8c8"
+        },
+        {
+          "file": "noto-sans-sc-56-400-normal.woff2",
+          "sha256": "81709277ab70ec4442552c26ec484ac4fea9825608e35937d46918853718de2f"
+        },
+        {
+          "file": "noto-sans-sc-57-400-normal.woff2",
+          "sha256": "ad1b3a57ac21ed3f8c95b16a229bc76cced8e49a7ccb46213cdaf9f5f2456eb2"
+        },
+        {
+          "file": "noto-sans-sc-58-400-normal.woff2",
+          "sha256": "0d53976e733bdac4cb5d82d3c81541c62e81316d5168ef9e32c13d3cb7350e88"
+        },
+        {
+          "file": "noto-sans-sc-59-400-normal.woff2",
+          "sha256": "f1201d94e3bc475a5ed2ae50c1d8567612ceb726845671e3b6881dcbf58e7b11"
+        },
+        {
+          "file": "noto-sans-sc-6-400-normal.woff2",
+          "sha256": "eb89d4458482416aa7cdc5bf2375ba2dadb558cc47743c248f1a9f59d82768aa"
+        },
+        {
+          "file": "noto-sans-sc-60-400-normal.woff2",
+          "sha256": "267b7c3abf1331eac941f589248b677b1946adcb5ce0a393dc5ae4bc50e019e2"
+        },
+        {
+          "file": "noto-sans-sc-61-400-normal.woff2",
+          "sha256": "221fde0edcb420c15479b4f8a0f9ce44f2c18daed7e40edeac54add5dc46df6d"
+        },
+        {
+          "file": "noto-sans-sc-62-400-normal.woff2",
+          "sha256": "eb1ed88c9e62baa9c53869812906422ad7ff122f2c85f996d7ff60ddfe06d903"
+        },
+        {
+          "file": "noto-sans-sc-63-400-normal.woff2",
+          "sha256": "fdf4cb489da2742f81f03387b786670b060778faa7cc94e5d31449c7abedf32c"
+        },
+        {
+          "file": "noto-sans-sc-64-400-normal.woff2",
+          "sha256": "6d7dab9e4d58643b61723efa00f66308298307b4f56009207d496ffe1c8f4480"
+        },
+        {
+          "file": "noto-sans-sc-65-400-normal.woff2",
+          "sha256": "b44bb9883d57447817aaba196fafd75f67c1e2d2cbd3ec36d98690e798e94889"
+        },
+        {
+          "file": "noto-sans-sc-66-400-normal.woff2",
+          "sha256": "63cce03a9ad8fada17258b8bb52b871d53e50bcffb4610fe371840da7866680c"
+        },
+        {
+          "file": "noto-sans-sc-67-400-normal.woff2",
+          "sha256": "cb12154112692c66db52f2e4fdfaa4fc113ac0b9570adaec4ee4c55cc2fbdb76"
+        },
+        {
+          "file": "noto-sans-sc-68-400-normal.woff2",
+          "sha256": "e0044aa161cc01383067bcce0fa368638d1ed083753fdc5db0082e96ae3631d2"
+        },
+        {
+          "file": "noto-sans-sc-69-400-normal.woff2",
+          "sha256": "fdd9aae52145fe71b3a2ecda23f7f2ef8460dc817cca0419b2b7c97e90e00dd7"
+        },
+        {
+          "file": "noto-sans-sc-70-400-normal.woff2",
+          "sha256": "57884ef84983279320e75440b40c8ffc7f94d4ae2aa904f453a594baebb4dbf3"
+        },
+        {
+          "file": "noto-sans-sc-71-400-normal.woff2",
+          "sha256": "b01eb9c4a36dadd01aae9fd0679e108144a35c83d8b571b9ca7a5f3ddb8663e3"
+        },
+        {
+          "file": "noto-sans-sc-72-400-normal.woff2",
+          "sha256": "b7eaf718308abdb9cde6e0796981df5d66e3b6ac09ef72e0fe7cdd72226afb3b"
+        },
+        {
+          "file": "noto-sans-sc-73-400-normal.woff2",
+          "sha256": "c0e3c0dc21700173d1f63678e8a4e675736242344abe371a528fc3448173dbb7"
+        },
+        {
+          "file": "noto-sans-sc-74-400-normal.woff2",
+          "sha256": "9bd05189a915eecfeca3a047920951efc34fe4ff9acf807a953cc82424da6147"
+        },
+        {
+          "file": "noto-sans-sc-75-400-normal.woff2",
+          "sha256": "d4bfa9e6b4acd3c4840bc74ac8846927f9b360b19523b0de39d878a1378a534e"
+        },
+        {
+          "file": "noto-sans-sc-76-400-normal.woff2",
+          "sha256": "a8d0560ff9e88417d0e079864a47c6039dae7986cbbe85415bd8a78e4e3820ae"
+        },
+        {
+          "file": "noto-sans-sc-77-400-normal.woff2",
+          "sha256": "e7827744951cb54a9fcae95b0ecd71618f51dd292ada890c590d5ad78782a890"
+        },
+        {
+          "file": "noto-sans-sc-78-400-normal.woff2",
+          "sha256": "5888533210e5b7e327e9187d67d6f87333bf8921bb25d9a1960a445bcf9a767a"
+        },
+        {
+          "file": "noto-sans-sc-79-400-normal.woff2",
+          "sha256": "a956682a0067e4f0bc614dfa53cb86ea077906784254708eed56610694a48546"
+        },
+        {
+          "file": "noto-sans-sc-80-400-normal.woff2",
+          "sha256": "5eab3572e5dfc501ab8f17e54f1df1237f567b8eca1757ddcabdf74704a85ee8"
+        },
+        {
+          "file": "noto-sans-sc-81-400-normal.woff2",
+          "sha256": "e9fd7c679cda8fd773244481d4390ebee71d0523e9a723a7fa3c243128349594"
+        },
+        {
+          "file": "noto-sans-sc-82-400-normal.woff2",
+          "sha256": "70a3d11131391c5df15ec99c21d3c206562575e3e4adfb3e757aa9dc631e9415"
+        },
+        {
+          "file": "noto-sans-sc-83-400-normal.woff2",
+          "sha256": "b412b8dc0f9e30e825c35445b725c3d5619f741fc01d757c35ffd258d581ef7b"
+        },
+        {
+          "file": "noto-sans-sc-84-400-normal.woff2",
+          "sha256": "d1b5af0c20b10f416cbcab989c6a4ce295a25180d324a33763e70e60dd69bee0"
+        },
+        {
+          "file": "noto-sans-sc-85-400-normal.woff2",
+          "sha256": "f6bcaef8ab8e5f9f780af09b1820c8327cd1e391f2f837489e868c310e133dd0"
+        },
+        {
+          "file": "noto-sans-sc-86-400-normal.woff2",
+          "sha256": "ae918e4d6d8a608f411b816d2098365e0ea33bcfc3586843aae4ab0e5215f923"
+        },
+        {
+          "file": "noto-sans-sc-87-400-normal.woff2",
+          "sha256": "bfedc5f12e9b48fab4a9e33df40f8916eacc58ecc8708353f4202736214af745"
+        },
+        {
+          "file": "noto-sans-sc-88-400-normal.woff2",
+          "sha256": "bcfdf8cf98bd6309f105f8355329db988ab89c9342bf7011468b7880d4d96cd8"
+        },
+        {
+          "file": "noto-sans-sc-89-400-normal.woff2",
+          "sha256": "6fe0b048940f7476c957e5af8bcab55110e4b25c50a1ec35339ff1bfe971dd84"
+        },
+        {
+          "file": "noto-sans-sc-90-400-normal.woff2",
+          "sha256": "29e5f26e91a5bef53dec181db1ba48b7fbc930a3a447250c480b15f2d8b80aa2"
+        },
+        {
+          "file": "noto-sans-sc-91-400-normal.woff2",
+          "sha256": "2b58832ab88ec951c9844b0d5bc0409d087269f4be2644906810848d87faabad"
+        },
+        {
+          "file": "noto-sans-sc-97-400-normal.woff2",
+          "sha256": "080d7bb6884be3cf146348a70fa5cd912eb0b1ce64d12a0d09c541e74722f6ce"
+        },
+        {
+          "file": "noto-sans-sc-98-400-normal.woff2",
+          "sha256": "0695f65b38d373d6fe451a8104b9236a63223285438473adbfb767f36bb11b92"
+        },
+        {
+          "file": "noto-sans-sc-99-400-normal.woff2",
+          "sha256": "1ded3d06687b7ba7a315d4a5442431af6e69718272666abfd2b78f66fd65f327"
+        },
+        {
+          "file": "noto-sans-sc-cyrillic-400-normal.woff2",
+          "sha256": "8cb87d06499a5084cd4b794e90b319c5526ab1da25db009a54f8f8ccd60ba948"
+        },
+        {
+          "file": "noto-sans-sc-latin-400-normal.woff2",
+          "sha256": "2a75408e073f2d7e03e14c24f25fb093571b73a030f2f483ae256d6975e930d0"
+        },
+        {
+          "file": "noto-sans-sc-latin-ext-400-normal.woff2",
+          "sha256": "e4210347a3d738093686d2d605c45b0dd0c7441acc3da8094cea25943c8fd40f"
+        },
+        {
+          "file": "noto-sans-sc-vietnamese-400-normal.woff2",
+          "sha256": "f07ef64be4c8a5064101c6ecc586a3b487a5ebed8164e21ff7260f4cf5790008"
+        }
+      ]
+    }
+  }
+}
