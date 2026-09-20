@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0,str(__import__('pathlib').Path('server').resolve()))
 import importlib.util,json,os,tempfile,threading,unittest,urllib.request,urllib.error
 from pathlib import Path
 from unittest.mock import patch
@@ -30,3 +32,20 @@ class APITest(unittest.TestCase):
   self.assertEqual(ai.clean_suggestions({'suggestions':[{'title':'诗','body':'invented','url':'evil'}]}),[{'title':'诗','author':'','quote':''}])
   with self.assertRaises(ValueError):ai.clean_suggestions({'text':'invented body'})
 if __name__=='__main__':unittest.main()
+
+class CommunityAPITest(unittest.TestCase):
+ post=APITest.post
+ tearDown=APITest.tearDown
+ def setUp(self):
+  APITest.setUp(self);self.url=self.url.replace('/api/poetry/hints','/api/feedback')
+ def test_feedback_and_private_read(self):
+  import uuid
+  status,data=self.post({'id':str(uuid.uuid4()),'category':'request','message':'请收录作品'})
+  self.assertEqual(status,200);self.assertTrue(data['ok'])
+  with self.assertRaises(urllib.error.HTTPError) as e:urllib.request.urlopen(self.url)
+  self.assertEqual(e.exception.code,404)
+ def test_event_fields(self):
+  import uuid
+  self.url=self.url.replace('/api/feedback','/api/events')
+  self.assertEqual(self.post({'id':str(uuid.uuid4()),'event':'page_view'})[0],200)
+  self.assertEqual(self.post({'id':str(uuid.uuid4()),'event':'search','query':'不应采集'})[0],400)

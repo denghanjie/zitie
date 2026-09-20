@@ -1,3 +1,4 @@
+import Feedback,{track} from './feedback';
 import {canUseImportedDraft} from './quality';
 import {textIntegrityIssue} from './editorial.js';
 import {migrateLibraryDraft,knownTextCorrection} from './text-corrections.js';
@@ -46,7 +47,7 @@ function App(){
  const initialized=useRef(false);
  useEffect(()=>{try{localStorage.setItem('yizi-draft',JSON.stringify(draft))}catch{}},[draft]);
  useEffect(()=>setError(''),[draft]);
- async function generate(){
+ async function generate(record=true){
   setError('');
   if(textIntegrityIssue(draft.content)){setError(textIntegrityIssue(draft.content));return;}
   if(knownTextCorrection(draft.content)){setError('正文含已确认的旧版用字差异，请先点击「改用校订正文」。');return;}
@@ -65,7 +66,7 @@ function App(){
    const shapeMissing=Object.keys(data).filter(c=>!data[c]&&!fontGlyphs[c]);
    const strokeMissing=input.mode==='single'?Object.keys(data).filter(c=>!data[c]):[];
    const fontMissing=input.font==='kai'?[]:Object.keys(data).filter(c=>!fontGlyphs[c]);
-   setResult({input,svgs});setPage(0);
+   setResult({input,svgs});setPage(0);if(record)track('worksheet_generated');
    const notes=[layoutNote+`${fontName} · 已生成 ${pages.length} 页。`];
    if(fontMissing.length)notes.push(`「${fontMissing.slice(0,10).join('、')}」等 ${fontMissing.length} 个字不在所选字体中，改用笔顺字形或系统字体。`);
    if(shapeMissing.length)notes.push(`「${shapeMissing.slice(0,10).join('、')}」等 ${shapeMissing.length} 个字暂无矢量字形，已使用系统字体。`);
@@ -73,16 +74,17 @@ function App(){
    setMessage(notes.join(' '));
   }catch(e){setError(e.message?.startsWith('字体加载失败')?e.message:'生成失败，请稍后重试。');console.error(e)}finally{setBusy(false)}
  }
- useEffect(()=>{if(!initialized.current){initialized.current=true;generate()}},[]);
+ useEffect(()=>{if(!initialized.current){initialized.current=true;track('page_view');generate(false)}},[]);
  const dirty=result&&JSON.stringify(draft)!==JSON.stringify(result.input);
- async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));setMessage('PDF 已生成，请查看浏览器下载列表。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
+ async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));track('pdf_download');setMessage('PDF 已生成，请查看浏览器下载列表。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
  return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><span className="motto"><a href="library/collation.html" target="_blank" rel="noreferrer">正文校勘记录 ↗</a></span></header>
  <section className="intro"><h1>把喜欢的文字，写成自己的字。</h1><p>粘贴文字，生成属于你的练字帖。</p></section>
- <main><Settings {...{draft,setDraft,busy,generate}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>window.print()} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
+ <main><Settings {...{draft,setDraft,busy,generate}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>{track('print_request');window.print()}} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}
  <p className="privacy">练习正文在本机排版；使用 AI 帮找时，仅查找线索发送给 DeepSeek。</p></section></main>
+ <Feedback/>
  <footer>打印建议：A4 纸张 · 纵向 · 100% 比例 · 关闭浏览器页眉页脚 <span>笔顺数据：<a href="https://hanziwriter.org" target="_blank" rel="noreferrer">Hanzi Writer</a> / Make Me a Hanzi</span></footer>
  <div className="print-pages">{result?.svgs.map((s,i)=><div key={i} className="print-page" dangerouslySetInnerHTML={{__html:s}}/>)}</div></>
 }

@@ -2,6 +2,7 @@
 import json, os, sqlite3, time, urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from community import submit
 KEY=os.environ.get('DEEPSEEK_API_KEY','')
 MODEL=os.environ.get('DEEPSEEK_MODEL','deepseek-chat')
 STATE=Path(os.environ.get('ZITIE_STATE_DIR','/var/lib/zitie'))
@@ -42,7 +43,20 @@ class Handler(BaseHTTPRequestHandler):
  def do_GET(self):
   if self.path=='/api/poetry/status':self.reply(200,{'available':bool(KEY)} )
   else:self.reply(404,{'error':'接口不存在。'})
+ def community(self):
+  if self.headers.get('Origin','') not in ('','https://zitie.denghanjie.vip','http://127.0.0.1:5173','http://localhost:5173'):return self.reply(403,{'error':'不允许的请求来源。'})
+  if self.headers.get('Content-Type','').split(';')[0]!='application/json':return self.reply(415,{'error':'需要 JSON 请求。'})
+  try:
+   n=int(self.headers.get('Content-Length','0'))
+   if not 0<n<=8192:return self.reply(413,{'error':'内容过长。'})
+   data=json.loads(self.rfile.read(n))
+   identifier=submit(STATE,'event' if self.path=='/api/events' else 'feedback',data,self.headers.get('X-Real-IP',self.client_address[0]))
+   self.reply(200,{'ok':True,'id':identifier})
+  except (ValueError,TypeError,AttributeError):self.reply(400,{'error':'请检查反馈类型及内容（2 至 1500 字）。'})
+  except OverflowError as e:self.reply(429,{'error':str(e)})
+  except Exception:self.reply(503,{'error':'暂时无法保存，请稍后重试。'})
  def do_POST(self):
+  if self.path in ('/api/feedback','/api/events'):return self.community()
   if self.path!='/api/poetry/hints':return self.reply(404,{'error':'接口不存在。'})
   if self.headers.get('Origin','') not in ('','https://zitie.denghanjie.vip','http://127.0.0.1:5173','http://localhost:5173'):return self.reply(403,{'error':'不允许的请求来源。'})
   if not KEY:return self.reply(503,{'error':'AI 服务暂未配置，仍可使用作品名或诗句检索。'})
