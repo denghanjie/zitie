@@ -75,3 +75,22 @@ assert(works.some(w=>w.text.includes('江枫渔火对愁眠')));
 assert(works.some(w=>w.text.includes('休说鲈鱼堪脍')),'missing characters restored inside their clause');
 assert(!works.some(w=>/[a-zA-Z]/u.test(w.text)),'pinyin must not enter worksheets');
 console.log('PASS: full ledger coverage, immutable editorial evidence, unresolved-source gating, author fixes, missing-character placement, draft migration.');
+
+// Unified search must include textbook-only works with their original quality gates.
+const {mergeLibraries}=await import('../src/library-search.js');
+const textbooks=JSON.parse(fs.readFileSync('public/library/textbooks.json','utf8'));
+const unified=mergeLibraries(data.works,textbooks);
+for(const [quote,title] of [['窈窕淑女，君子好逑','关雎'],['唧唧复唧唧，木兰当户织','木兰诗']]){
+ for(const q of [quote,quote.replace('，',', '),title]){
+  const found=searchWorks(unified,q,unified.length).filter(w=>w.title===title);
+  assert.equal(found.length,1,'duplicate textbook placements are merged');
+  assert.equal(found[0].qualityKey,`textbook:${title}`);
+  assert(canApplyWork(found[0].qualityKey));
+  assert.equal(found[0].layout,'poem');
+ }
+ assert(hintedWorks(unified,[{title,author:'佚名',quote:''}]).some(w=>w.title===title));
+}
+assert(searchWorks(unified,simplify('窈窕淑女，君子好逑')).some(w=>w.title==='关雎'));
+assert.equal(new Set(unified.map(w=>w.id)).size,unified.length);
+assert(unified.filter(w=>w.sourceKind==='textbook').some(w=>!canApplyWork(w.qualityKey)),'merging must not promote unverified texts');
+console.log('PASS: unified poetry/textbook search, exact verses, AI anonymous-author hints, deduplication and quality keys.');
