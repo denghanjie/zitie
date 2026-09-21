@@ -65,7 +65,6 @@ export function paginate(input,data) {
  if(layout.poetry)return paginatePoetry(layout);
  const rows=[];
  for(const p of layout.lines) {
-  if(kind==='reference'){const ref={...input,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid',mode:'single',content:'轰湿荒笛罚假臂',title:'硬笔小字 · 15毫米字格试印'};const pages=paginate(ref,data);return pageSvg(ref,data,pages[0],0,pages.length,fontGlyphs)}
  const chars=[...p];
   if(!chars.length){rows.push([]);continue;}
   rows.push(...wrapLine(p,layout.columns));
@@ -120,6 +119,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  return s+'</svg>';
 }
 export function comparisonSvg(input,data,fontGlyphs={},kind='ink'){
+  if(kind==='reference'){const ref={...input,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid',mode:'single',content:'轰湿荒笛罚假臂',title:'硬笔小字 · 15毫米字格试印'};const pages=paginate(ref,data);return pageSvg(ref,data,pages[0],0,pages.length,fontGlyphs)}
  const chars=[...'永和清风明月'],sizes=kind==='size';
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="圆珠笔描写试印页"><rect width="794" height="1123" fill="white"/>${outlineFilter}`;
  s+=text(sizes?'圆珠笔描写 · 字号对比':'圆珠笔描写 · 效果对比',397,75,28,'#333','middle');
