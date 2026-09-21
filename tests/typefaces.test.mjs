@@ -77,3 +77,6 @@ const hollow=pageSvg({...inkInput,traceStyle:'outline'},inkData,inkPages[0],0,1)
 assert.equal((hollow.match(/data-model-outline="true"/g)||[]).length,5,'first model and stroke instructions remain solid');
 assert.deepEqual(paginate({...inkInput,ink:'dark',traceStyle:'outline'},inkData),inkPages,'ink does not affect pagination');
 assert(comparisonSvg(inkInput,inkData).includes('空心'));
+
+assert(comparisonSvg(inkInput,inkData,{},'size').includes('65%'));
+assert(comparisonSvg(inkInput,inkData,{},'size').includes('data-model-scale="0.5"'));

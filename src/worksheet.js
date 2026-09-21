@@ -116,14 +116,14 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  s+=text(footer,397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
  return s+'</svg>';
 }
-export function comparisonSvg(input,data,fontGlyphs={}){
- const chars=[...'永和清风明月'];
+export function comparisonSvg(input,data,fontGlyphs={},kind='ink'){
+ const chars=[...'永和清风明月'],sizes=kind==='size';
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="圆珠笔描写试印页"><rect width="794" height="1123" fill="white"/>${outlineFilter}`;
- s+=text('圆珠笔描写 · 效果对比',397,75,28,'#333','middle');
- s+=text('同一字体、同一字号，请用常用纸张按 A4、100% 比例打印。',397,112,15,'#666','middle');
- const styles=[...INK_LEVELS.map(x=>({...x,outline:false})),{label:'空心 · 中等深浅',color:'#b8b8b8',outline:true}];
- styles.forEach((style,i)=>{const y=175+i*205;s+=text(style.label,85,y-15,18,'#444');chars.forEach((c,j)=>{s+=grid(85+j*104,y,97,input.grid)+modelGlyph(c,data[c],85+j*104,y,97,style.color,fontGlyphs[c],fontScale(input.fontSize),style.outline)});s+=text('试写感受：________________________________________________',85,y+137,14,'#777')});
- return s+text('选自己的笔迹最清楚的一档；若浅色打印不出，请选中等深浅。',397,1060,14,'#666','middle')+'</svg>';
+ s+=text(sizes?'圆珠笔描写 · 字号对比':'圆珠笔描写 · 效果对比',397,75,28,'#333','middle');
+ s+=text(sizes?'字格不变，对比 100%、80%、65%、50% 范字；按 A4、100% 比例打印。':'同一字体、同一字号，请用常用纸张按 A4、100% 比例打印。',397,112,15,'#666','middle');
+ const styles=sizes?[{label:'标准 · 100%',scale:1},{label:'小 · 80%',scale:.8},{label:'较小 · 65%（建议先试）',scale:.65},{label:'很小 · 50%',scale:.5}].map(x=>({...x,color:'#d2d2d2',outline:false})):[...INK_LEVELS.map(x=>({...x,outline:false})),{label:'空心 · 中等深浅',color:'#b8b8b8',outline:true}];
+ styles.forEach((style,i)=>{const y=175+i*205;s+=text(style.label,85,y-15,18,'#444');chars.forEach((c,j)=>{s+=grid(85+j*104,y,97,input.grid)+modelGlyph(c,data[c],85+j*104,y,97,style.color,fontGlyphs[c],style.scale??fontScale(input.fontSize),style.outline)});s+=text('试写感受：________________________________________________',85,y+137,14,'#777')});
+ return s+text(sizes?'建议先试 65%；字格保持不变，留出更多运笔空间。':'选自己的笔迹最清楚的一档；若浅色打印不出，请选中等深浅。',397,1060,14,'#666','middle')+'</svg>';
 }
 export async function downloadPdf(svgs,title,progress) {
  const {jsPDF}=await import('jspdf');

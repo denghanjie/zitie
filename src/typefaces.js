@@ -32,6 +32,6 @@ export async function loadTypeface(id,content){
  return Object.fromEntries(chars.filter(c=>result[c]).map(c=>[c,result[c]]));
 }
 
-export const FONT_SIZES = [{id:'small',label:'小 · 80%',scale:.8},{id:'normal',label:'标准 · 100%',scale:1},{id:'large',label:'大 · 110%',scale:1.1}];
+export const FONT_SIZES = [{id:'tiny',label:'很小 · 50%',scale:.5},{id:'compact',label:'较小 · 65%',scale:.65},{id:'small',label:'小 · 80%',scale:.8},{id:'normal',label:'标准 · 100%',scale:1},{id:'large',label:'大 · 110%',scale:1.1}];
 export const normalizeFontSize=id=>FONT_SIZES.some(s=>s.id===id)?id:'normal';
 export const fontScale=id=>FONT_SIZES.find(s=>s.id===normalizeFontSize(id)).scale;
