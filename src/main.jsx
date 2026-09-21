@@ -1,3 +1,4 @@
+import {INK_LEVELS,normalizeInk,comparisonSvg} from './worksheet';
 import Feedback,{track} from './feedback';
 import {canUseImportedDraft} from './quality';
 import {textIntegrityIssue} from './editorial.js';
@@ -10,8 +11,8 @@ import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
 import {TYPEFACES,normalizeTypeface,loadTypeface,FONT_SIZES,normalizeFontSize} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize)})}catch{return {...example,font:'kai',fontSize:'normal'}}}
-function Settings({draft,setDraft,busy,generate}){
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize),ink:normalizeInk(d.ink),traceStyle:d.traceStyle==='outline'?'outline':'solid'})}catch{return {...example,font:'kai',fontSize:'normal',ink:'light',traceStyle:'solid'}}}
+function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  const [inputMode,setInputMode]=useState('paste');
  const dialog=useRef(null);
  useEffect(()=>{if(inputMode==='paste')return;const el=dialog.current;el.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{el.close();document.body.style.overflow=previous}},[inputMode]);
@@ -32,6 +33,8 @@ function Settings({draft,setDraft,busy,generate}){
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
  <div className="font-controls"><label className="layout-setting">字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label}</option>)}</select></label><label className="layout-setting">字号<select aria-label="范字大小" value={draft.fontSize} onChange={e=>change('fontSize',e.target.value)}>{FONT_SIZES.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label></div>
+ <div className="font-controls"><label className="layout-setting">范字深浅<select aria-label="范字深浅" value={draft.ink} onChange={e=>change('ink',e.target.value)}>{INK_LEVELS.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label><label className="layout-setting">描写样式<select aria-label="描写样式" value={draft.traceStyle} onChange={e=>change('traceStyle',e.target.value)}><option value="solid">实心范字</option><option value="outline">空心轮廓</option></select></label></div>
+ <button className="trial-button" type="button" disabled={trialBusy||busy} onClick={trial}>{trialBusy?'正在制作试印页…':'下载深浅与空心对比试印页'}</button><p className="source-note">圆珠笔建议先试浅色。逐字练习首格和笔顺保留清晰示范；深浅与空心应用于描写范字。</p>
  <details className="advanced-settings"><summary>更多设置<span>排版 · 字格 · 标题</span></summary>
  <p className="source-note">字号只调整范字，字格大小不变；逐字练习的笔顺始终使用笔顺楷体。</p>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>长短句自动折行；空行表示分阕或分节，分页尽量保持完整。</small></label>}
@@ -44,6 +47,8 @@ function Settings({draft,setDraft,busy,generate}){
 }
 function App(){
  const[draft,setDraft]=useState(getDraft),[result,setResult]=useState(null),[busy,setBusy]=useState(false),[pdfBusy,setPdfBusy]=useState(false),[message,setMessage]=useState(''),[page,setPage]=useState(0),[error,setError]=useState('');
+ const[trialBusy,setTrialBusy]=useState(false);
+ async function trial(){setTrialBusy(true);setError('');try{const content='永和清风明月';const[data,glyphs]=await Promise.all([loadCharacters(content),loadTypeface(draft.font,content)]);await downloadPdf([comparisonSvg(draft,data,glyphs)],'圆珠笔描写效果对比',()=>{});setMessage('对比试印页已生成，请查看下载列表。')}catch{setError('试印页生成失败，请稍后重试。')}finally{setTrialBusy(false)}}
  const initialized=useRef(false);
  useEffect(()=>{try{localStorage.setItem('yizi-draft',JSON.stringify(draft))}catch{}},[draft]);
  useEffect(()=>setError(''),[draft]);
@@ -79,7 +84,7 @@ function App(){
  async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));track('pdf_download');setMessage('PDF 已生成，请查看浏览器下载列表。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
  return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><span className="motto"><a href="library/collation.html" target="_blank" rel="noreferrer">正文校勘记录 ↗</a></span></header>
  <section className="intro"><h1>把喜欢的文字，写成自己的字。</h1><p>粘贴文字，生成属于你的练字帖。</p></section>
- <main><Settings {...{draft,setDraft,busy,generate}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>{track('print_request');window.print()}} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
+ <main><Settings {...{draft,setDraft,busy,generate,trial,trialBusy}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>{track('print_request');window.print()}} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}

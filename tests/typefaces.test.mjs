@@ -65,3 +65,15 @@ try{
  }
 }finally{globalThis.fetch=originalFetch;}
 console.log('PASS: licensed font coverage, vector rendering, six model cells, independent stroke order, fallback, lazy caching and retry.');
+
+const {INK_LEVELS,normalizeInk,comparisonSvg}=await import('../src/worksheet.js');
+assert.equal(normalizeInk('bad'),'light');
+const inkInput={content:'永',title:'试印',mode:'single',grid:'tian',font:'kai',fontSize:'normal'};
+const inkData={永:JSON.parse(fs.readFileSync('public/data/永.json','utf8'))};
+const inkPages=paginate(inkInput,inkData);
+const light=pageSvg(inkInput,inkData,inkPages[0],0,1);
+assert(light.includes(INK_LEVELS[0].color));
+const hollow=pageSvg({...inkInput,traceStyle:'outline'},inkData,inkPages[0],0,1);
+assert.equal((hollow.match(/data-model-outline="true"/g)||[]).length,5,'first model and stroke instructions remain solid');
+assert.deepEqual(paginate({...inkInput,ink:'dark',traceStyle:'outline'},inkData),inkPages,'ink does not affect pagination');
+assert(comparisonSvg(inkInput,inkData).includes('空心'));

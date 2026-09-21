@@ -1,6 +1,9 @@
 import {fontScale} from './typefaces.js';
 import {isHan, articleLayout, paginatePoetry, wrapLine} from './poetry.js';
 export {isHan, articleLayout} from './poetry.js';
+export const INK_LEVELS=[{id:'light',label:'浅 · 圆珠笔推荐',color:'#d2d2d2'},{id:'medium',label:'中 · 较清晰',color:'#b8b8b8'},{id:'dark',label:'深 · 对照临写',color:'#929292'}];
+export const normalizeInk=id=>INK_LEVELS.some(x=>x.id===id)?id:'light';
+const outlineFilter='<defs><filter id="model-outline" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="erode" radius="0.65" result="inner"/><feComposite in="SourceGraphic" in2="inner" operator="out"/></filter></defs>';
 const cache = new Map();
 export async function loadCharacters(text, progress) {
   const chars = [...new Set([...text].filter(isHan))];
@@ -37,8 +40,9 @@ function glyph(c,d,x,y,size,color,step,fontGlyph) {
   if(!d) return text(c,x+size/2,y+size*.77,size*.77,color,'middle');
   return `<g transform="translate(${x+size*.08} ${y+size*.08}) scale(${size*.84/1024} ${-size*.84/1024}) translate(0 -900)">${d.strokes.map((p,i)=>`<path d="${p}" fill="${step===undefined?color:i<step?'#606c65':i===step?'#202f27':'#eeeeeb'}"/>`).join('')}</g>`;
 }
-function modelGlyph(c,d,x,y,size,color,fontGlyph,scale) {
- const drawing=glyph(c,d,x,y,size,color,undefined,fontGlyph);
+function modelGlyph(c,d,x,y,size,color,fontGlyph,scale,outline=false) {
+ const raw=glyph(c,d,x,y,size,color,undefined,fontGlyph);
+ const drawing=outline?`<g data-model-outline="true" filter="url(#model-outline)">${raw}</g>`:raw;
  if(scale===1)return drawing;
  const cx=x+size/2,cy=y+size/2;
  return `<g data-model-scale="${scale}" transform="translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})">${drawing}</g>`;
@@ -73,13 +77,15 @@ export function paginate(input,data) {
 }
 export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  const scale=fontScale(input.fontSize);
+ const ink=INK_LEVELS.find(x=>x.id===normalizeInk(input.ink)).color,outline=input.traceStyle==='outline';
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="${esc(input.title||'汉字练习')} 第${index+1}页"><rect width="794" height="1123" fill="white"/>`;
+ s+=outlineFilter;
  s+=text(input.title||'汉字练习',397,77,32,'#18271e','middle');
  s+=text('姓名：____________    日期：____________',704,120,15,'#66746b','end');
  s+='<path d="M85 137H709" stroke="#d5ded7"/>';
  if(input.mode==='single') {
   for(const {c,y,h} of page){
-   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+modelGlyph(c,data[c],85+i*105,y,97,i===0?'#202721':'#aeb3ae',fontGlyphs[c],scale);
+   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+modelGlyph(c,data[c],85+i*105,y,97,i===0?'#202721':ink,fontGlyphs[c],scale,i!==0&&outline);
    s+=text('笔顺',85,y+121,12);
    const d=data[c];
    if(d) d.strokes.forEach((_,i)=>{
@@ -101,7 +107,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
    for(let col=0;col<count;col++){
     const x=left+col*cell,y=page.rowY?.[r]??(top+r*(cell+gap));
     s+=grid(x,y,cell,input.grid);
-    if(row[col])s+=modelGlyph(row[col],data[row[col]],x,y,cell,'#a8afa8',fontGlyphs[row[col]],scale);
+    if(row[col])s+=modelGlyph(row[col],data[row[col]],x,y,cell,ink,fontGlyphs[row[col]],scale,outline);
    }
   });
  }
@@ -109,6 +115,15 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  const footer=fontLabel?`范字：${fontLabel}${input.mode==='single'?' · 笔顺示意：笔顺楷体':''}`:'静下心，写好每一个字。';
  s+=text(footer,397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
  return s+'</svg>';
+}
+export function comparisonSvg(input,data,fontGlyphs={}){
+ const chars=[...'永和清风明月'];
+ let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="圆珠笔描写试印页"><rect width="794" height="1123" fill="white"/>${outlineFilter}`;
+ s+=text('圆珠笔描写 · 效果对比',397,75,28,'#333','middle');
+ s+=text('同一字体、同一字号，请用常用纸张按 A4、100% 比例打印。',397,112,15,'#666','middle');
+ const styles=[...INK_LEVELS.map(x=>({...x,outline:false})),{label:'空心 · 中等深浅',color:'#b8b8b8',outline:true}];
+ styles.forEach((style,i)=>{const y=175+i*205;s+=text(style.label,85,y-15,18,'#444');chars.forEach((c,j)=>{s+=grid(85+j*104,y,97,input.grid)+modelGlyph(c,data[c],85+j*104,y,97,style.color,fontGlyphs[c],fontScale(input.fontSize),style.outline)});s+=text('试写感受：________________________________________________',85,y+137,14,'#777')});
+ return s+text('选自己的笔迹最清楚的一档；若浅色打印不出，请选中等深浅。',397,1060,14,'#666','middle')+'</svg>';
 }
 export async function downloadPdf(svgs,title,progress) {
  const {jsPDF}=await import('jspdf');
