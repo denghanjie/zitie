@@ -54,7 +54,7 @@ export function paginate(input,data) {
  if(input.mode==='single') {
   const pages=[]; let rows=[],used=0;
   for(const c of [...input.content].filter(isHan)) {
-   const h=120+Math.max(1,Math.ceil((data[c]?.strokes.length||0)/20))*34;
+   const h=(input.practiceProfile==='hardpen'?15*794/210+23:120)+Math.max(1,Math.ceil((data[c]?.strokes.length||0)/20))*34;
    if(used+h>890&&rows.length){pages.push(rows);rows=[];used=0;}
    rows.push({c,y:155+used,h});used+=h;
   }
@@ -65,7 +65,8 @@ export function paginate(input,data) {
  if(layout.poetry)return paginatePoetry(layout);
  const rows=[];
  for(const p of layout.lines) {
-  const chars=[...p];
+  if(kind==='reference'){const ref={...input,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid',mode:'single',content:'轰湿荒笛罚假臂',title:'硬笔小字 · 15毫米字格试印'};const pages=paginate(ref,data);return pageSvg(ref,data,pages[0],0,pages.length,fontGlyphs)}
+ const chars=[...p];
   if(!chars.length){rows.push([]);continue;}
   rows.push(...wrapLine(p,layout.columns));
  }
@@ -84,15 +85,17 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  s+=text('姓名：____________    日期：____________',704,120,15,'#66746b','end');
  s+='<path d="M85 137H709" stroke="#d5ded7"/>';
  if(input.mode==='single') {
+  const hardpen=input.practiceProfile==='hardpen',cell=hardpen?15*794/210:97,pitch=hardpen?cell:105,left=hardpen?(794-cell*10)/2:85,strokeTop=hardpen?cell+7:104;
   for(const {c,y,h} of page){
-   for(let i=0;i<6;i++)s+=grid(85+i*105,y,97,input.grid)+modelGlyph(c,data[c],85+i*105,y,97,i===0?'#202721':ink,fontGlyphs[c],scale,i!==0&&outline);
-   s+=text('笔顺',85,y+121,12);
+   for(let i=0;i<6;i++)s+=grid(left+i*pitch,y,cell,input.grid)+modelGlyph(c,data[c],left+i*pitch,y,cell,i===0?'#202721':ink,fontGlyphs[c],scale,i!==0&&outline);
+   if(hardpen)for(let i=6;i<10;i++)s+=grid(left+i*pitch,y,cell,input.grid);
+   s+=text('笔顺',85,y+strokeTop+17,12);
    const d=data[c];
    if(d) d.strokes.forEach((_,i)=>{
-    const x=122+(i%20)*29, yy=y+104+Math.floor(i/20)*34;
+    const x=122+(i%20)*29, yy=y+strokeTop+Math.floor(i/20)*34;
     s+=glyph(c,d,x,yy,27,'#222',i)+text(i+1,x+13.5,yy+32,7,'#778078','middle');
    });
-   else s+=text('此字暂无笔顺数据，可照范字临摹',125,y+121,12,'#a5683c');
+   else s+=text('此字暂无笔顺数据，可照范字临摹',125,y+strokeTop+17,12,'#a5683c');
    s+=`<path d="M85 ${y+h-9}H709" stroke="#e3e7e2"/>`;
   }
  } else {
@@ -111,7 +114,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
    }
   });
  }
- const fontLabel={serif:'宋体',sans:'黑体'}[input.font];
+ const fontLabel={serif:'宋体',sans:'黑体',wenkai:'细笔文楷'}[input.font];
  const footer=fontLabel?`范字：${fontLabel}${input.mode==='single'?' · 笔顺示意：笔顺楷体':''}`:'静下心，写好每一个字。';
  s+=text(footer,397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
  return s+'</svg>';

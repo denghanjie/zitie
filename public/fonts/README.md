@@ -25,3 +25,9 @@
 4. 运行 `pnpm test`、`pnpm build`。应用运行时无需 Python 或字体解析依赖。
 
 不含字体加粗、斜体或书法体模拟；不修改原始字体设计，也不使用 AI 生成字形。
+
+## 细笔文楷（硬笔小字版式）
+
+新增 LXGW WenKai v1.311 原生 Light 300，取自固定包 `@fontsource/lxgw-wenkai@5.3.0`，遵循 SIL OFL 1.1，完整许可见 `wenkai-OFL.txt`。来源为 https://github.com/lxgw/LxgwWenKai ，并非照片中商业字帖的同款字体；不宣称复制其专有字形。未通过图像侵蚀等方式人为削细笔画。
+
+从 https://registry.npmjs.org/@fontsource/lxgw-wenkai/-/lxgw-wenkai-5.3.0.tgz 解包后，运行 `python3 scripts/build-wenkai.py <package目录>`。文件名中的 latin 是该包的命名，实际包含中文；manifest 保存原文件 SHA-256 和 30,127 个可用字形的清单。按 128 码点分块加载。

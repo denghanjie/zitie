@@ -28,6 +28,7 @@ export function wrapLine(line,columns,natural=false) {
  return rows;
 }
 export function articleLayout(input) {
+ const hardpen=input.practiceProfile==='hardpen',hardpenCell=15*794/210;
  const content=input.content.replace(/\r\n?/g,'\n').replace(/\t/g,'  ');
  const original=content.split('\n');
  const nonempty=original.filter(s=>s.trim());
@@ -38,16 +39,17 @@ export function articleLayout(input) {
  const lyric=lengths.length>=4&&lengths.every(n=>n>0&&n<=12)&&lengths.reduce((a,b)=>a+b,0)/lengths.length<=7.5;
  const knownTitle=/如梦令|水调歌头|梦游天姥吟留别/.test(input.title||'');
  const poetry=input.layout==='poem'||(input.layout!=='prose'&&(regular||explicitVerse||lyric||knownTitle));
+ if(!poetry&&hardpen)return {poetry:false,lines:original,columns:11,cell:hardpenCell,gap:8,perPage:13};
  if(!poetry)return {poetry:false,lines:original,columns:12,cell:52,gap:1,perPage:16};
  const split=input.lineBreak==='punctuation'||(input.lineBreak!=='original'&&(nonempty.length<=1||nonempty.every(s=>[...s.trim()].length>24)));
  const lines=original.flatMap(line=>line.trim()?(split?splitClauses(line.trim()):[line.trim()]):['']);
  while(lines.length&&!lines[0])lines.shift();while(lines.length&&!lines.at(-1))lines.pop();
- const columns=Math.min(12,Math.max(1,...lines.map(s=>[...s].length)));
- let cell=Math.min(84,624/columns);const gap=24;
+ const columns=Math.min(hardpen?11:12,Math.max(1,...lines.map(s=>[...s].length)));
+ let cell=hardpen?hardpenCell:Math.min(84,624/columns);const gap=hardpen?14:24;
  // For moderately sized stanzas, trade a little grid size for an intact page.
  const stanzaLengths=lines.join('\n').split(/\n\n+/).map(s=>s.split('\n').reduce((n,line)=>n+wrapLine(line,columns,true).length,0));
  const largest=Math.max(0,...stanzaLengths);
- if(largest>0&&largest<=12){
+ if(!hardpen&&largest>0&&largest<=12){
   const fitting=(850-(largest-1)*gap)/largest;
   cell=Math.min(cell,Math.max(52,fitting));
  }

@@ -6,7 +6,7 @@ import sys,json,pathlib,re,hashlib,shutil
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 source=pathlib.Path(sys.argv[1]);target=pathlib.Path('public/fonts');target.mkdir(exist_ok=True)
-manifest={'version':'fontsource-5.3.0','fonts':{}}
+manifest=json.loads((target/'manifest.json').read_text()) if (target/'manifest.json').exists() else {'version':'fontsource-5.3.0','fonts':{}}
 for family in ['serif','sans']:
  glyphs={};files=[]
  for path in sorted((source/family).glob('*.woff2')):

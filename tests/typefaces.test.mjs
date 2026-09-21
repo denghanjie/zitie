@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {TYPEFACES,normalizeTypeface,loadTypeface} from '../src/typefaces.js';
 import {paginate,pageSvg} from '../src/worksheet.js';
 const manifest=JSON.parse(fs.readFileSync('public/fonts/manifest.json','utf8'));
-for(const id of ['serif','sans']){
+for(const id of ['serif','sans','wenkai']){
  const m=manifest.fonts[id];let count=0;
  for(const block of m.blocks){
   const data=JSON.parse(fs.readFileSync(`public/fonts/${id}/${block}.json`,'utf8'));
@@ -13,7 +13,7 @@ for(const id of ['serif','sans']){
  }
  assert.equal(count,m.glyphCount);assert(count>10000);assert(fs.readFileSync(`public/fonts/${id}-OFL.txt`,'utf8').includes('SIL OPEN FONT LICENSE'));
 }
-assert.equal(normalizeTypeface(undefined),'kai');assert.equal(normalizeTypeface('unknown'),'kai');assert.equal(TYPEFACES.length,3);
+assert.equal(normalizeTypeface(undefined),'kai');assert.equal(normalizeTypeface('unknown'),'kai');assert.equal(TYPEFACES.length,4);
 let calls=0,failNext=false;
 const originalFetch=globalThis.fetch;
 globalThis.fetch=async url=>{
@@ -80,3 +80,13 @@ assert(comparisonSvg(inkInput,inkData).includes('空心'));
 
 assert(comparisonSvg(inkInput,inkData,{},'size').includes('65%'));
 assert(comparisonSvg(inkInput,inkData,{},'size').includes('data-model-scale="0.5"'));
+
+const referenceInput={...inkInput,practiceProfile:'hardpen',content:'永'.repeat(35)};
+const referencePages=paginate(referenceInput,inkData);
+assert(referencePages.length>1);
+for(const page of referencePages){assert(page.every(r=>r.y+r.h<=1045));const svg=pageSvg(referenceInput,inkData,page,0,1);assert(svg.includes('width="56.714285714285715"'));}
+assert.equal(paginate({...referenceInput,content:'永'.repeat(7)},inkData).length,1);
+const {articleLayout}=await import('../src/poetry.js');
+for(const layout of ['poem','prose']){const l=articleLayout({...referenceInput,mode:'article',layout});assert(Math.abs(l.cell*210/794-15)<.00001);assert(l.columns*l.cell<=624);}
+const wenkai=JSON.parse(fs.readFileSync(`public/fonts/wenkai/${Math.floor('永'.codePointAt(0)/128)}.json`));assert(wenkai['永']);
+const referenceSvg=comparisonSvg(referenceInput,inkData,wenkai,'reference');assert(referenceSvg.includes('细笔文楷'));assert(referenceSvg.includes('15毫米'));
