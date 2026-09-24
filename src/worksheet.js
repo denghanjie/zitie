@@ -103,9 +103,8 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
   const top=poetry?175:155;
   const left=(794-columns*cell)/2;
   page.forEach((row,r)=>{
-   // Blank stanzas remain whitespace, rather than a full line of empty boxes.
-   if(poetry&&!row.length)return;
-   const count=poetry?row.length:columns;
+   // Draw only occupied cells; punctuation wrapping and paragraph endings leave whitespace.
+   const count=row.length;
    for(let col=0;col<count;col++){
     const x=left+col*cell,y=page.rowY?.[r]??(top+r*(cell+gap));
     s+=grid(x,y,cell,input.grid);
