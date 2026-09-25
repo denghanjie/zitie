@@ -27,6 +27,22 @@ export function wrapLine(line,columns,natural=false) {
  }
  return rows;
 }
+// Article paragraphs start with two cells; closing punctuation that would
+// start the next row hangs in the final cell instead of moving a Han character.
+export function wrapParagraph(line,columns) {
+ const chars=[...line.trimStart()],rows=[];let start=0;
+ while(start<chars.length){
+  const indent=rows.length?0:2;
+  let end=Math.min(start+columns-indent,chars.length);
+  if(end<chars.length&&opening.test(chars[end-1]))end--;
+  const row=[...Array(indent).fill(''),...chars.slice(start,end)];
+  let hanging='';
+  while(end<chars.length&&closing.test(chars[end]))hanging+=chars[end++];
+  if(hanging){row.hanging=hanging;row.push(hanging);}
+  rows.push(row);start=end;
+ }
+ return rows;
+}
 export function articleLayout(input) {
  const hardpen=input.practiceProfile==='hardpen',hardpenCell=15*794/210;
  const content=input.content.replace(/\r\n?/g,'\n').replace(/\t/g,'  ');

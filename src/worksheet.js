@@ -1,5 +1,5 @@
 import {fontScale} from './typefaces.js';
-import {isHan, articleLayout, paginatePoetry, wrapLine} from './poetry.js';
+import {isHan, articleLayout, paginatePoetry, wrapParagraph} from './poetry.js';
 export {isHan, articleLayout} from './poetry.js';
 export const INK_LEVELS=[{id:'light',label:'浅 · 圆珠笔推荐',color:'#d2d2d2'},{id:'medium',label:'中 · 较清晰',color:'#b8b8b8'},{id:'dark',label:'深 · 对照临写',color:'#929292'}];
 export const normalizeInk=id=>INK_LEVELS.some(x=>x.id===id)?id:'light';
@@ -67,7 +67,7 @@ export function paginate(input,data) {
  for(const p of layout.lines) {
  const chars=[...p];
   if(!chars.length){rows.push([]);continue;}
-  rows.push(...wrapLine(p,layout.columns));
+  rows.push(...wrapParagraph(p,layout.columns));
  }
  return Array.from({length:Math.ceil(rows.length/layout.perPage)},(_,i)=>{
   const page=rows.slice(i*layout.perPage,(i+1)*layout.perPage);
@@ -104,11 +104,15 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
   const left=(794-columns*cell)/2;
   page.forEach((row,r)=>{
    // Draw only occupied cells; punctuation wrapping and paragraph endings leave whitespace.
-   const count=row.length;
+   const count=row.length-(row.hanging?1:0);
    for(let col=0;col<count;col++){
     const x=left+col*cell,y=page.rowY?.[r]??(top+r*(cell+gap));
     s+=grid(x,y,cell,input.grid);
     if(row[col])s+=modelGlyph(row[col],data[row[col]],x,y,cell,ink,fontGlyphs[row[col]],scale,outline);
+    if(row.hanging&&col===count-1){
+     const size=cell*Math.min(.32,.6/[...row.hanging].length);
+     s+=text(row.hanging,x+cell*.98,y+cell*.94,size,ink,'end');
+    }
    }
   });
  }

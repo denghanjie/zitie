@@ -30,3 +30,20 @@ const prose={...base,layout:'prose',content:seven};assert.equal(articleLayout(pr
 const paragraph={...base,content:'这是一段用于测试普通文章排版的文字，字帖应该继续按文章方式排版，不应把长段落错误拆成诗词。'.repeat(20)};assert.equal(articleLayout(paragraph).poetry,false);verify(paragraph);
 const single=paginate({...base,mode:'single',content:'春春，'},{});assert.equal(single.flat().length,2);
 console.log('PASS: all layout, punctuation, content-preservation, stanza and pagination checks');
+// Workbook-style prose: indentation and overflow punctuation preserve all text.
+for(const profile of ['hardpen','large']){
+ const input={...base,layout:'prose',practiceProfile:profile,content:'从小丘西行百二十步，隔篁竹，闻水声，如鸣珮环，心乐之。\n潭中鱼可百许头，皆若空游无所依。'};
+ const pages=verify(input),rows=pages.flat();
+ assert.deepEqual(rows[0].slice(0,2),['','']);
+ assert.equal(rows.filter(r=>r[0]===''&&r[1]==='').length,2);
+ const columns=pages[0].layout.columns;
+ const edge={...input,content:'春'.repeat(columns-3)+'环，下一句。'};
+ const ep=verify(edge),first=ep[0][0];
+ assert.equal(first[columns-1],'环');assert.equal(first.hanging,'，');
+ assert.equal(ep[0][1][0],'下');
+ const svg=pageSvg(edge,{},ep[0],0,ep.length);
+ assert(svg.includes('>，</text>'));
+ const longInput={...input,content:('“'+ '春'.repeat(50)+'。”').repeat(30)};
+ verify(longInput);
+}
+console.log('PASS: prose indentation, hanging punctuation, and multi-page text preservation');
