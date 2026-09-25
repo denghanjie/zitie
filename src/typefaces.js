@@ -1,7 +1,7 @@
 import {FONT_BLOCKS} from './font-coverage.js';
 export const TYPEFACES = [
  {id:'wenkai',label:'细笔文楷',description:'霞鹜文楷 Light · 硬笔练习'},
- {id:'kai',label:'笔顺楷体',description:'默认 · 适合基础临摹'},
+ {id:'kai',label:'笔顺楷体',description:'笔顺示范 · 笔画较饱满'},
  {id:'serif',label:'宋体',description:'Noto Serif SC · 端正清晰'},
  {id:'sans',label:'黑体',description:'Noto Sans SC · 简洁工整'},
 ];

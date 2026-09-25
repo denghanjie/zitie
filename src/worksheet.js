@@ -1,7 +1,7 @@
 import {fontScale} from './typefaces.js';
 import {isHan, articleLayout, paginatePoetry, wrapParagraph} from './poetry.js';
 export {isHan, articleLayout} from './poetry.js';
-export const INK_LEVELS=[{id:'light',label:'浅 · 圆珠笔推荐',color:'#d2d2d2'},{id:'medium',label:'中 · 较清晰',color:'#b8b8b8'},{id:'dark',label:'深 · 对照临写',color:'#929292'}];
+export const INK_LEVELS=[{id:'light',label:'浅 · 圆珠笔推荐',color:'#d2d2d2'},{id:'medium',label:'范例灰 · 推荐',color:'#aaaaaa'},{id:'dark',label:'深 · 对照临写',color:'#929292'}];
 export const normalizeInk=id=>INK_LEVELS.some(x=>x.id===id)?id:'light';
 const outlineFilter='<defs><filter id="model-outline" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="erode" radius="0.65" result="inner"/><feComposite in="SourceGraphic" in2="inner" operator="out"/></filter></defs>';
 const cache = new Map();
@@ -122,7 +122,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
  return s+'</svg>';
 }
 export function comparisonSvg(input,data,fontGlyphs={},kind='ink'){
-  if(kind==='reference'){const ref={...input,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid',mode:'single',content:'轰湿荒笛罚假臂',title:'硬笔小字 · 15毫米字格试印'};const pages=paginate(ref,data);return pageSvg(ref,data,pages[0],0,pages.length,fontGlyphs)}
+  if(kind==='reference'){const ref={...input,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid',mode:'single',content:'轰湿荒笛罚假臂',title:'细笔灰字 · 15毫米字格试印'};const pages=paginate(ref,data);return pageSvg(ref,data,pages[0],0,pages.length,fontGlyphs)}
  const chars=[...'永和清风明月'],sizes=kind==='size';
  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" width="794" height="1123" role="img" aria-label="圆珠笔描写试印页"><rect width="794" height="1123" fill="white"/>${outlineFilter}`;
  s+=text(sizes?'圆珠笔描写 · 字号对比':'圆珠笔描写 · 效果对比',397,75,28,'#333','middle');
