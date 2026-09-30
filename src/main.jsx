@@ -1,3 +1,5 @@
+import History from './History.jsx';
+import {saveHistory} from './history.js';
 import {INK_LEVELS,normalizeInk,comparisonSvg} from './worksheet';
 import Feedback,{track} from './feedback';
 import {canUseImportedDraft} from './quality';
@@ -50,6 +52,11 @@ function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
 function App(){
  const[draft,setDraft]=useState(getDraft),[result,setResult]=useState(null),[busy,setBusy]=useState(false),[pdfBusy,setPdfBusy]=useState(false),[message,setMessage]=useState(''),[page,setPage]=useState(0),[error,setError]=useState('');
  const[trialBusy,setTrialBusy]=useState(false);
+ const[historyOpen,setHistoryOpen]=useState(false);
+ function remember(input,action){try{saveHistory(input,action);return true}catch(e){setError(e.message?.includes('记录')?e.message:'字帖记录保存失败，浏览器存储空间可能不足或已被禁用。');return false}}
+ function rememberDraft(){setError('');if(!draft.content.trim()){setError('请先输入想保存的内容。');return}if(remember(draft,'manual'))setMessage('字帖已保存，可在「我的字帖」中打开。')}
+ function printWorksheet(){if(!result)return;setError('');remember(result.input,'print');track('print_request');window.print()}
+ function openHistory(input){setDraft({...input});setResult(null);setPage(0);setHistoryOpen(false);setMessage('已打开保存的字帖，可修改内容；点击「生成字帖」后打印或导出。')}
  async function trial(kind='ink'){setTrialBusy(true);setError('');try{const content=kind==='reference'?'轰湿荒笛罚假臂':'永和清风明月';const[data,glyphs]=await Promise.all([loadCharacters(content),loadTypeface(kind==='reference'?'wenkai':draft.font,content)]);await downloadPdf([comparisonSvg(draft,data,glyphs,kind)],kind==='reference'?'细笔灰字范例试印':kind==='size'?'圆珠笔字号大小对比':'圆珠笔描写效果对比',()=>{});setMessage('对比试印页已生成，请查看下载列表。')}catch{setError('试印页生成失败，请稍后重试。')}finally{setTrialBusy(false)}}
  const initialized=useRef(false);
  useEffect(()=>{try{localStorage.setItem('yizi-draft',JSON.stringify(draft))}catch{}},[draft]);
@@ -83,14 +90,15 @@ function App(){
  }
  useEffect(()=>{if(!initialized.current){initialized.current=true;track('page_view');generate(false)}},[]);
  const dirty=result&&JSON.stringify(draft)!==JSON.stringify(result.input);
- async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));track('pdf_download');setMessage('PDF 已生成，请查看浏览器下载列表。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
- return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><span className="motto"><a href="library/collation.html" target="_blank" rel="noreferrer">正文校勘记录 ↗</a></span></header>
+ async function save(){if(!result)return;setPdfBusy(true);setMessage('正在制作 PDF…');try{await downloadPdf(result.svgs,result.input.title,n=>setMessage(`正在制作 PDF：${n} / ${result.svgs.length} 页`));track('pdf_download');const recorded=remember(result.input,'pdf');setMessage(recorded?'PDF 已生成，字帖已保存到「我的字帖」。':'PDF 已生成，但字帖记录未能保存。')}catch(e){console.error(e);setMessage('PDF 下载失败。可使用「打印」并选择「另存为 PDF」。')}finally{setPdfBusy(false)}}
+ return <><header><a className="brand" href="./">一字一练</a><span className="brand-tag">用喜欢的文字，遇见更好的自己</span><button className="history-entry" disabled={busy||pdfBusy} onClick={()=>setHistoryOpen(true)}>我的字帖</button><span className="motto"><a href="library/collation.html" target="_blank" rel="noreferrer">正文校勘记录 ↗</a></span></header>
  <section className="intro"><h1>把喜欢的文字，写成自己的字。</h1><p>粘贴文字，生成属于你的练字帖。</p></section>
- <main><Settings {...{draft,setDraft,busy,generate,trial,trialBusy}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={()=>{track('print_request');window.print()}} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
+ <main><Settings {...{draft,setDraft,busy,generate,trial,trialBusy}}/><section className="preview"><div className="preview-toolbar"><div><h2>字帖预览</h2><span>A4 · 纵向</span></div><div className="export-actions"><button onClick={rememberDraft} disabled={busy||pdfBusy||!draft.content.trim()}>保存字帖</button><button onClick={printWorksheet} disabled={!result||busy||pdfBusy||dirty}>打印</button><span></span><button onClick={save} disabled={!result||busy||pdfBusy||dirty}>{pdfBusy?'制作中…':'保存 PDF'}</button></div></div>
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}
  <p className="privacy">练习正文在本机排版；使用 AI 帮找时，仅查找线索发送给 DeepSeek。</p></section></main>
+ {historyOpen&&<History onClose={()=>setHistoryOpen(false)} onOpen={openHistory}/>}
  <Feedback/>
  <footer>打印建议：A4 纸张 · 纵向 · 100% 比例 · 关闭浏览器页眉页脚 <span>笔顺数据：<a href="https://hanziwriter.org" target="_blank" rel="noreferrer">Hanzi Writer</a> / Make Me a Hanzi</span></footer>
  <div className="print-pages">{result?.svgs.map((s,i)=><div key={i} className="print-page" dangerouslySetInnerHTML={{__html:s}}/>)}</div></>

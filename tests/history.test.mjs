@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readHistory,saveHistory,deleteHistory,restoreHistory,HISTORY_KEY} from '../src/history.js';
+const values=new Map(),storage={getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};
+const input={content:'春眠不觉晓，',title:'春晓',font:'wenkai',ink:'medium',mode:'article'};
+const first=saveHistory(input,'manual',storage);assert.equal(readHistory(storage).length,1);
+saveHistory({...input},'pdf',storage);assert.equal(readHistory(storage).length,1);assert.equal(readHistory(storage)[0].action,'pdf');
+saveHistory({...input,content:'处处闻啼鸟。'},'print',storage);assert.equal(readHistory(storage).length,2);
+const removed=deleteHistory(first.id,storage);assert.equal(readHistory(storage).length,1);restoreHistory(removed,storage);assert.equal(readHistory(storage).length,2);
+assert.equal(readHistory(storage).find(r=>r.id===first.id).input.content,input.content);
+values.set(HISTORY_KEY,'broken');assert.throws(()=>saveHistory(input,'pdf',storage));assert.equal(values.get(HISTORY_KEY),'broken');
+assert.throws(()=>saveHistory(input,'manual',{getItem:()=>null,setItem:()=>{throw Error('quota')}}));
+assert.throws(()=>saveHistory({content:' '},'manual',storage));
+console.log('PASS: history persistence, deduplication, edited copies, delete/undo and storage errors');

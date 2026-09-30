@@ -1,0 +1,10 @@
+import React,{useEffect,useRef,useState} from 'react';
+import {readHistory,deleteHistory,restoreHistory,HISTORY_KEY} from './history.js';
+export default function History({onClose,onOpen}){
+ const dialog=useRef(null),[rows,setRows]=useState([]),[query,setQuery]=useState(''),[error,setError]=useState(''),[deleted,setDeleted]=useState(null);
+ function refresh(){try{setRows(readHistory());setError('')}catch(e){setError(e.message)}}
+ useEffect(()=>{dialog.current.showModal();refresh();const listener=e=>{if(e.key===HISTORY_KEY)refresh()};window.addEventListener('storage',listener);return()=>window.removeEventListener('storage',listener)},[]);
+ function remove(id){try{setDeleted(deleteHistory(id));refresh()}catch{setError('删除失败，请检查浏览器存储空间或权限。')}}
+ function undo(){try{restoreHistory(deleted);setDeleted(null);refresh()}catch{setError('恢复失败，请检查浏览器存储空间或权限。')}}
+ return <dialog className="history-dialog" ref={dialog} onCancel={onClose} aria-labelledby="history-title"><div className="history-heading"><h2 id="history-title">我的字帖</h2><button onClick={onClose} aria-label="关闭我的字帖">关闭</button></div><p>保存在当前浏览器，含正文和排版设置。清除网站数据会删除记录，不会跨设备同步。</p><input aria-label="搜索已保存字帖" placeholder="按标题或正文查找" value={query} onChange={e=>setQuery(e.target.value)}/>{error&&<p role="alert">{error}</p>}{deleted&&<p role="status">已删除「{deleted.input.title||'未命名字帖'}」。<button onClick={undo}>撤销删除</button></p>}<div className="history-list">{rows.filter(r=>(r.input.title+' '+r.input.content).includes(query)).map(r=><article key={r.id}><h3>{r.input.title||'未命名字帖'}</h3><p className="history-excerpt">{r.input.content.slice(0,90)}</p><small>{new Date(r.updatedAt).toLocaleString('zh-CN')} · {({pdf:'已导出 PDF',print:'已发起打印',manual:'手动保存'})[r.action]||'已保存'} · {r.input.mode==='single'?'逐字练习':'整篇临摹'}</small><div className="history-actions"><button onClick={()=>onOpen(r.input)}>打开 / 编辑</button><button onClick={()=>remove(r.id)}>删除</button></div></article>)}</div>{!rows.length&&!error&&<p>还没有保存记录。保存字帖、导出 PDF 或发起打印后，会出现在这里。</p>}{rows.length>0&&!rows.some(r=>(r.input.title+' '+r.input.content).includes(query))&&<p>没有找到匹配的字帖。</p>}<p>打开后可修改并再次保存为新记录；相同内容和设置不会重复保存。</p></dialog>
+}
