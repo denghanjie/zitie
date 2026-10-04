@@ -36203,6 +36203,32 @@
         "url": "https://github.com/ddabb/poetryesm/blob/34d14ed12372b9d55406f2b66303c66cd1a3dfe0/source/明代/杨慎.json"
       },
       "referenceText": "滚滚长江东逝水，\n浪花淘尽英雄。\n是非成败转头空。\n青山依旧在，\n几度夕阳红。\n白发渔樵江渚上，\n惯看秋月春风。\n一壶浊酒喜相逢。\n古今多少事，\n都付笑谈中。"
+    },
+    {
+      "key": "poetry:yanzhenqing-quanxue",
+      "title": "劝学",
+      "author": "颜真卿",
+      "characters": 28,
+      "textHash": "8e6f0e209192ccd771a2bfb475511d57ad6941ca3ba9fd1c1f6979d726cd67af",
+      "reference": {
+        "title": "劝学",
+        "author": "颜真卿",
+        "url": "https://github.com/ddabb/poetryesm/blob/34d14ed12372b9d55406f2b66303c66cd1a3dfe0/source/唐代/颜真卿.json"
+      },
+      "referenceText": "三更灯火五更鸡，\n正是男儿读书时。\n黑发不知勤学早，\n白首方悔读书迟。"
+    },
+    {
+      "key": "poetry:xunzi-quanxue-excerpt",
+      "title": "劝学（节选）",
+      "author": "荀子",
+      "characters": 291,
+      "textHash": "551914da8b5cdc6558c3ed2682367102465dc379e1566f25f9c814d96b6b53a1",
+      "reference": {
+        "title": "劝学（节选）",
+        "author": "荀子",
+        "url": "https://github.com/gxwtf/poem/blob/618c9daafa90024487e853451e236d4ca66ab79c/scripts/poem-content/senior.json"
+      },
+      "referenceText": "君子曰：学不可以已。\n\n青，取之于蓝，而青于蓝；冰，水为之，而寒于水。木直中绳，𫐓以为轮，其曲中规。虽有槁暴，不复挺者，𫐓使之然也。故木受绳则直，金就砺则利，君子博学而日参省乎己，则知明而行无过矣。\n\n吾尝终日而思矣，不如须臾之所学也；吾尝跂而望矣，不如登高之博见也。登高而招，臂非加长也，而见者远；顺风而呼，声非加疾也，而闻者彰。假舆马者，非利足也，而致千里；假舟楫者，非能水也，而绝江河。君子生非异也，善假于物也。\n\n积土成山，风雨兴焉；积水成渊，蛟龙生焉；积善成德，而神明自得，圣心备焉。故不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。蚓无爪牙之利，筋骨之强，上食埃土，下饮黄泉，用心一也。蟹六跪而二螯，非蛇鳝之穴无可寄托者，用心躁也。"
     }
   ]
 }

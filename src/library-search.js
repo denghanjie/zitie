@@ -55,7 +55,8 @@ export function searchWorks(works,query,limit=30){
    else if(w._text.includes(t)){score+=40;matched++;}
   }
   // Also allow author/title without spaces, e.g. 苏轼水调歌头.
-  if(compact===w._author+w._title||compact===w._title+w._author){score+=220;matched=tokens.length;}
+  const shortTitle=normalize(w.title.replace(/[（(]节选[）)]$/u,''));
+  if([w._author+w._title,w._title+w._author,w._author+shortTitle,shortTitle+w._author].includes(compact)){score+=220;matched=tokens.length;}
   if(matched!==tokens.length){
    const a=grams(compact),b=grams(w._title);const overlap=[...a].filter(g=>b.has(g)).length;
    if(compact.length>=4&&overlap/Math.max(a.size,b.size)>=.55)score=15+overlap;

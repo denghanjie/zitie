@@ -105,3 +105,21 @@ for(const q of ['杨慎 临江仙','滚滚长江东逝水 浪花淘尽英雄','�
 assert.equal(hintedWorks(unified,[{author:'杨慎',title:'临江仙',quote:''}])[0].id,yang.id);
 assert.equal(searchWorks(unified,'滚滚黄河西游记 浪花淘尽英雄').length,0);
 console.log('PASS: sourced Yang Shen poem, author/title hints, single-character verse suggestion without modifying the body.');
+
+// Homonymous 劝学 entries stay distinct, searchable and usable after collation.
+for(const [author,id,quote] of [
+ ['荀子','xunzi-quanxue-excerpt','学不可以已'],
+ ['颜真卿','yanzhenqing-quanxue','三更灯火五更鸡'],
+]){
+ for(const query of ['劝学',`${author}劝学`,`${author} 劝学`,quote]){
+  assert(searchWorks(unified,query).some(w=>w.id===id&&canApplyWork(w.qualityKey)),query);
+ }
+ assert(hintedWorks(unified,[{title:'劝学',author}]).some(w=>w.id===id));
+}
+const xunzi=works.find(w=>w.id==='xunzi-quanxue-excerpt');
+assert.equal(xunzi.title,'劝学（节选）');
+assert.equal(xunzi.text.split('\n\n').length,4);
+assert(xunzi.text.includes('輮以为轮'));
+assert(xunzi.text.endsWith('用心躁也。'));
+assert(searchWorks(unified,'孙权劝学').some(w=>w.title==='孙权劝学'&&canApplyWork(w.qualityKey)));
+console.log('PASS: 劝学 homonyms, excerpt scope, author/title/verse and AI retrieval.');

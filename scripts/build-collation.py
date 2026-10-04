@@ -52,6 +52,8 @@ for old in evidence:
    if tag!='equal':punct.append({'type':tag,'offset':i,'before':raw_a[i:j],'after':raw_b[k:l]})
   if a==b and normal_author(w['author'])==normal_author(ref['author']):
    status='compared';reason='正文汉字与所列对照文本逐字一致；标点差异另列。这不是所有版本均无误的认证。'
+  elif key=='poetry:xunzi-quanxue-excerpt' and a==b.replace('𫐓','輮') and w['author']==ref['author']=='荀子':
+   status='retained';reason='明确选录四段；与对照节选逐字比较，仅“輮／𫐓”字形不同，保留正文来源的“輮”。通假字不作现代字替换，完整差异另列。'
   elif key.startswith('textbook:') and w['title'] in retained:
    status='retained';reason=retained[w['title']]+' 此条记录版本选择，不宣称逐字等同每个教材印次。'
   elif a in b and normal_author(w['author'])==normal_author(ref['author']):
