@@ -47,3 +47,19 @@ for(const profile of ['hardpen','large']){
  verify(longInput);
 }
 console.log('PASS: prose indentation, hanging punctuation, and multi-page text preservation');
+
+// Intersecting future strokes must never mask the current or completed ink.
+const crossing={strokes:['M0 500H900V550H0Z','M400 0H450V900H400Z','M0 300H900V350H0Z']};
+const crossingInput={mode:'single',content:'十',grid:'tian'};
+const stepsSvg=pageSvg(crossingInput,{'十':crossing},paginate(crossingInput,{'十':crossing})[0],0,1);
+const steps=[...stepsSvg.matchAll(/<g transform="[^"]*">((?:<path[^>]*\/>)+)<\/g>/g)].map(m=>[...m[1].matchAll(/<path d="([^"]*)" fill="([^"]*)"\/>/g)]).filter(p=>p.some(m=>m[2]==='#202f27'));
+assert.equal(steps.length,3);
+steps.forEach((paths,i)=>{
+ assert.equal(paths.length,3);
+ assert.equal(paths.at(-1)[1],crossing.strokes[i]);
+ assert.equal(paths.at(-1)[2],'#202f27');
+ const future=paths.filter(p=>p[2]==='#eeeeeb');
+ assert.equal(future.length,2-i);
+ assert(paths.slice(0,future.length).every(p=>p[2]==='#eeeeeb'));
+});
+console.log('PASS: crossing stroke layers keep completed and current ink continuous.');

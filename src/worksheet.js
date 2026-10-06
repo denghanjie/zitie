@@ -38,7 +38,13 @@ function glyph(c,d,x,y,size,color,step,fontGlyph) {
     return `<g transform="translate(${x+size/2} ${y+size*.82}) scale(${size*.8/u} ${-size*.8/u}) translate(${-a/2} 0)"><path d="${esc(path)}" fill="${color}"/></g>`;
   }
   if(!d) return text(c,x+size/2,y+size*.77,size*.77,color,'middle');
-  return `<g transform="translate(${x+size*.08} ${y+size*.08}) scale(${size*.84/1024} ${-size*.84/1024}) translate(0 -900)">${d.strokes.map((p,i)=>`<path d="${p}" fill="${step===undefined?color:i<step?'#606c65':i===step?'#202f27':'#eeeeeb'}"/>`).join('')}</g>`;
+  // Future strokes belong behind the ink: otherwise their intersections erase earlier strokes.
+  const path=(p,fill)=>`<path d="${p}" fill="${fill}"/>`;
+  const strokes=step===undefined?d.strokes.map(p=>path(p,color)).join(''):
+    d.strokes.slice(step+1).map(p=>path(p,'#eeeeeb')).join('')+
+    d.strokes.slice(0,step).map(p=>path(p,'#606c65')).join('')+
+    path(d.strokes[step],'#202f27');
+  return `<g transform="translate(${x+size*.08} ${y+size*.08}) scale(${size*.84/1024} ${-size*.84/1024}) translate(0 -900)">${strokes}</g>`;
 }
 function modelGlyph(c,d,x,y,size,color,fontGlyph,scale,outline=false) {
  const raw=glyph(c,d,x,y,size,color,undefined,fontGlyph);
