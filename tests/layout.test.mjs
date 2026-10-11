@@ -10,7 +10,7 @@ const norm=s=>s.replace(/\s/g,'');
 function verify(input){
  const pages=paginate(input,{});assert(pages.length>0);
  assert.equal(norm(pages.flat(2).join('')),norm(input.content));
- for(const p of pages){assert(p.length);if(p.layout.poetry){assert.equal(p.rowY.length,p.length);assert(p.rowY.every((y,i)=>y>=175&&y+p.layout.cell<=1025));assert(p.every(r=>r.length<=12));assert(p.every(r=>!/[，。！？；）】》」』”’]/u.test(r[0])));}}
+ for(const p of pages){assert(p.length);if(p.layout.poetry){assert.equal(p.rowY.length,p.length);assert(p.rowY.every((y,i)=>y>=175&&y+p.layout.cell<=1025));assert(p.every(r=>r.length<=p.layout.columns));assert(p.every(r=>!/[，。！？；）】》」』”’]/u.test(r[0])));}}
  return pages;
 }
 const sevenPages=verify({...base,content:seven});assert.equal(sevenPages[0].layout.columns,8);assert.equal(sevenPages[0].length,4);assert.equal((pageSvg({...base,content:seven},{},sevenPages[0],0,1).match(/<rect /g)||[]).length,33);
@@ -63,3 +63,17 @@ steps.forEach((paths,i)=>{
  assert(paths.slice(0,future.length).every(p=>p[2]==='#eeeeeb'));
 });
 console.log('PASS: crossing stroke layers keep completed and current ink continuous.');
+
+// Five- and seven-character couplets include a full cell per punctuation mark.
+for(const practiceProfile of ['hardpen','large']){
+ for(const [content,columns] of [['暮投石壕村，有吏夜捉人。\n老翁逾墙走，老妇出门看。',12],['死去元知万事空，但悲不见九州同。\n王师北定中原日，家祭无忘告乃翁。',16]]){
+  const input={...base,practiceProfile,lineBreak:'original',content};
+  const pages=verify(input);
+  assert.equal(pages.flat().length,2);
+  assert.equal(pages[0].layout.columns,columns);
+  assert(pages.flat().every(row=>row.length===columns));
+  assert(pages[0].layout.cell*columns<=624);
+  assert(pages[0].layout.cell>=39);
+ }
+}
+console.log('PASS: uniform adaptive poetry cells preserve full couplets and punctuation.');

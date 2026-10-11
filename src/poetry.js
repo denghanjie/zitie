@@ -60,8 +60,9 @@ export function articleLayout(input) {
  const split=input.lineBreak==='punctuation'||(input.lineBreak!=='original'&&(nonempty.length<=1||nonempty.every(s=>[...s.trim()].length>24)));
  const lines=original.flatMap(line=>line.trim()?(split?splitClauses(line.trim()):[line.trim()]):['']);
  while(lines.length&&!lines[0])lines.shift();while(lines.length&&!lines.at(-1))lines.pop();
- const columns=Math.min(hardpen?11:12,Math.max(1,...lines.map(s=>[...s].length)));
- let cell=hardpen?hardpenCell:Math.min(84,624/columns);const gap=hardpen?14:24;
+ const columns=Math.min(16,Math.max(1,...lines.map(s=>[...s].length)));
+ // One size for the whole poem; fit five/seven-character couplets including punctuation.
+ let cell=Math.min(hardpen?hardpenCell:84,624/columns);const gap=hardpen?14:24;
  // For moderately sized stanzas, trade a little grid size for an intact page.
  const stanzaLengths=lines.join('\n').split(/\n\n+/).map(s=>s.split('\n').reduce((n,line)=>n+wrapLine(line,columns,true).length,0));
  const largest=Math.max(0,...stanzaLengths);
