@@ -87,6 +87,6 @@ assert(referencePages.length>1);
 for(const page of referencePages){assert(page.every(r=>r.y+r.h<=1045));const svg=pageSvg(referenceInput,inkData,page,0,1);assert(svg.includes('width="56.714285714285715"'));}
 assert.equal(paginate({...referenceInput,content:'永'.repeat(7)},inkData).length,1);
 const {articleLayout}=await import('../src/poetry.js');
-for(const layout of ['poem','prose']){const l=articleLayout({...referenceInput,mode:'article',layout});assert(Math.abs(l.cell*210/794-15)<.00001);assert(l.columns*l.cell<=624);}
+for(const layout of ['poem','prose']){const l=articleLayout({...referenceInput,mode:'article',layout});if(layout==='prose')assert(Math.abs(l.cell*210/794-15)<.00001);else {assert.equal(l.columns,16);assert.equal(l.cell,39);}assert(l.columns*l.cell<=624);}
 const wenkai=JSON.parse(fs.readFileSync(`public/fonts/wenkai/${Math.floor('永'.codePointAt(0)/128)}.json`));assert(wenkai['永']);
 const referenceSvg=comparisonSvg(referenceInput,inkData,wenkai,'reference');assert(referenceSvg.includes('细笔文楷'));assert(referenceSvg.includes('15毫米'));
