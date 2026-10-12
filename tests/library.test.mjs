@@ -123,3 +123,48 @@ assert(xunzi.text.includes('輮以为轮'));
 assert(xunzi.text.endsWith('用心躁也。'));
 assert(searchWorks(unified,'孙权劝学').some(w=>w.title==='孙权劝学'&&canApplyWork(w.qualityKey)));
 console.log('PASS: 劝学 homonyms, excerpt scope, author/title/verse and AI retrieval.');
+
+// 2026-10-09: complete one poem and keep prose annotations out of printable text.
+const {createHash}=await import('node:crypto');
+const evidence=JSON.parse(fs.readFileSync('data/library/collation-evidence.json','utf8'));
+const scopes=JSON.parse(fs.readFileSync('data/library/scope-decisions.json','utf8'));
+for(const [id,status] of [['33f5ebee27d7b663','compared'],['00b257d9fe3ddbfa','retained']]){
+ const key=`poetry:${id}`,work=data.works.find(w=>w.id===id);
+ const edit=EDITORIAL_EDITS.find(e=>e.key===key),row=evidence.rows.find(r=>r.key===key);
+ const hash=s=>createHash('sha256').update(s).digest('hex');
+ assert.equal(hash(edit.beforeText),edit.beforeHash);
+ assert.equal(hash(edit.afterText),edit.afterHash);
+ assert.equal(work.text,edit.afterText);
+ assert.equal(hash(work.text),row.textHash);
+ assert.equal(qualityFor(key).status,status);
+ assert(canApplyWork(key));
+ assert(scopes[key]);
+ assert.equal(work.editorialRevision,'2026-10-09-1');
+ const cached=prepareWorks([{...work,text:edit.beforeText}])[0];
+ assert.equal(cached.text,work.text,'old cached corpus receives the complete approved edit');
+ const imported={title:work.title,content:edit.beforeText,source:{title:work.title,author:work.author,qualityKey:key}};
+ assert.equal(await canUseImportedDraft(migrateEditorialDraft(imported)),true);
+ assert.equal(migrateEditorialDraft({...imported,source:null}).content,edit.beforeText,'manual pasted text is preserved');
+ assert.throws(()=>applyEditorial({...work,text:edit.beforeText+'自写内容'}),/校勘版本不匹配/);
+}
+const wuti=data.works.find(w=>w.id==='33f5ebee27d7b663');
+assert.equal(wuti.text.split('\n').length,4);
+assert.equal([...wuti.text.matchAll(/\p{Script=Han}/gu)].length,56);
+assert(wuti.text.endsWith('斑骓只系垂杨岸，何处西南待好风。'));
+assert(searchWorks(works,'何处西南待好风').some(w=>w.id===wuti.id));
+const wutiEvidence=evidence.rows.find(r=>r.key===`poetry:${wuti.id}`);
+assert(wutiEvidence.alternativeReferences[0].referenceText.includes('何处西南任好风'));
+assert(wutiEvidence.decision.includes('不证明“任”为错字'));
+const caogui=data.works.find(w=>w.id==='00b257d9fe3ddbfa');
+assert(caogui.text.includes('小惠未遍，民弗从也。'));
+assert(caogui.text.includes('战则请从。”\n公与之乘'));
+assert(caogui.text.includes('彼竭我盈，故克之。夫大国'));
+assert(!caogui.text.includes('一作'));
+const caoguiLedger=ledger.entries.find(r=>r.key===`poetry:${caogui.id}`);
+assert.deepEqual(caoguiLedger.characterDifferences.map(d=>[d.before,d.after]),[['遍','徧']]);
+assert(caoguiLedger.allCodepointDifferences.some(d=>d.before==='。'&&d.after==='，'));
+assert(caoguiLedger.editorialChange.beforeText.includes('（遍 一作：徧)'));
+assert(caoguiLedger.editorialChange.reason.includes('现代整理标点'));
+assert.equal(caoguiLedger.editorialChange.reference.teachingDate,'2018-05-17');
+assert.equal(caoguiLedger.editorialChange.reference.documentDate,'2019-05');
+console.log('PASS: complete 无题 first poem, 待/任 provenance, 曹刿 prose-only text, 遍/徧 retention, editorial punctuation, hashes and draft migration.');

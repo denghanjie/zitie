@@ -27,7 +27,7 @@ GitHub Actions 只执行测试与构建，不存储服务器密钥或自动发�
 
 ## DeepSeek 服务
 
-将 `server/ai.py` 安装到 `/opt/zitie-ai/ai.py`，创建无登录权限的 `zitie-ai` 系统用户，安装 `zitie-ai.service` 到 `/etc/systemd/system/`。
+将 `server/ai.py`、`server/online.py`、`server/community.py` 一并安装到 `/opt/zitie-ai/`，创建无登录权限的 `zitie-ai` 系统用户，安装 `zitie-ai.service` 到 `/etc/systemd/system/`。
 
 在 `/etc/zitie/ai.env` 设置以下环境变量（目录权限 700，文件 root 所有、权限 600；不可放入网站根目录或 Git）：
 
@@ -39,7 +39,18 @@ AI_DAILY_LIMIT=100
 
 执行 `systemctl daemon-reload` 和 `systemctl enable --now zitie-ai`。服务仅监听 `127.0.0.1:8789`，通过本目录 Nginx 配置代理 `/api/poetry/`，必须覆盖 `X-Real-IP`，不要向公网开放 8789 端口。先 `nginx -t` 再 reload。
 
-`GET /api/poetry/status` 返回配置状态；`POST /api/poetry/hints` 接收 `{"query":"李白梦里游仙山的诗"}`，仅返回作品候选线索。密钥留在服务端。默认单 IP 每小时 10 次、全站每天 100 次（UTC 日界），失败调用也计数；直接检索不受影响。计数存于 `/var/lib/zitie/quota.sqlite`，保留约两天，不保存查询正文。额度是应用限流，并非服务商账单硬上限。
+`GET /api/poetry/status` 返回配置状态；`POST /api/poetry/hints` 接收 `{"query":"李白梦里游仙山的诗"}`，返回 `suggestions` 和 `online`。每次 AI 查询均调用 DeepSeek，随后通过固定的 `https://zh.wikisource.org/w/api.php` 搜索最多 3 组线索、读取最多 6 个来源版本（不用额外 API Key）。`online.status` 为 `completed` / `partial` / `unavailable`；即使无在线结果仍保留本地资料库结果。`sources` 提供实际抓取文本、版本号、固定版本 URL、SHA-256 和诗句匹配状态，不接受模型生成 URL 或正文。密钥留在服务端。默认单 IP 每小时 10 次、全站每天 100 次（UTC 日界），失败调用也计数；直接检索不受影响。计数存于 `/var/lib/zitie/quota.sqlite`，保留约两天，不保存查询正文。额度是应用限流，并非服务商账单硬上限。
+
+### 联网查找与核对边界
+
+- 更新时必须同时发布前端与三个后端 Python 文件，并重启服务；Nginx `proxy_read_timeout` 为 60 秒，前端超时为 65 秒。
+- 服务器须能访问 `api.deepseek.com` 和 `zh.wikisource.org`。DeepSeek 请求仍使用现有 Key/模型配置；维基文库为公开只读 API，不新增付费搜索服务或凭据。
+- DeepSeek Chat Completions 负责作品识别，联网由应用代码执行，不能仅在提示词里要求联网。官方 [Responses 兼容说明](https://api-docs.deepseek.com/guides/responses_api/) 也列明其内置 `web_search` 类型被忽略，因此不能通过添加此参数假装已搜索。
+- 来源读取仅访问固定域名，禁止重定向，单请求最多 1 MB、6 秒，文本最多 16000 字（超出不截断，跳过来源）。读取指定 revision 的 HTML 后提取纯文本段落，剔除常见导航、表格、脚注、样式和脚本；不执行页面内容。复杂版式可能无法提取，预览仍可能含序言或注释。
+- `source_fetched` 仅表示真实抓取，不代表学术校勘；`quoteCheck` 仅在提示诗句至少 4 字时对实际正文做 NFKC/标点/空白归一化子串核对。前端在本地资料库及其 OpenCC 转换器可用时，另对实际来源正文与提示诗句进行繁简归一比较；仅新增 `matched_after_conversion` 信息标签，保留来源原字形和后端原始核对结果，不标记为已校勘。异体字不强行等同；`not_found` 可能是字形差异，也可能作品不符，不可视为确认或断言错误。无提示诗句返回 `not_provided`。
+- 在线候选与本地校勘记录分离。用户核对篇名、作者和所选正文并明确勾选后可填入；不会自动加入已校勘资料库，且不放开本地待校勘篇目。作者预填来自 AI 线索，尚未核准。
+- 来源可能缺失、超时或不可达；返回可用候选及明确失败状态，不回退成编造文本。状态接口 `available` 只表示密钥已配置，不是实时上游健康检查。
+- API 合约参考：[MediaWiki 搜索](https://www.mediawiki.org/wiki/API:Search)、[版本读取](https://www.mediawiki.org/wiki/API:Revisions)、[指定版本解析](https://www.mediawiki.org/wiki/API:Parsing_wikitext)。
 
 本地调试：设置 `DEEPSEEK_API_KEY` 和可写的 `ZITIE_STATE_DIR` 后运行 `python3 server/ai.py`，另一个终端 `pnpm dev`；Vite 已配置接口代理。
 

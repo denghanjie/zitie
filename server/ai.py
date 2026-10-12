@@ -1,8 +1,9 @@
-"""Small loopback-only DeepSeek query interpreter. Never returns poem bodies."""
+"""Loopback-only DeepSeek identification and independent online source retrieval."""
 import json, os, sqlite3, time, urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from community import submit
+from online import retrieve
 KEY=os.environ.get('DEEPSEEK_API_KEY','')
 MODEL=os.environ.get('DEEPSEEK_MODEL','deepseek-chat')
 STATE=Path(os.environ.get('ZITIE_STATE_DIR','/var/lib/zitie'))
@@ -68,7 +69,9 @@ class Handler(BaseHTTPRequestHandler):
   except (ValueError,AttributeError,TypeError):return self.reply(400,{'error':'查询格式不正确。'})
   try:
    if not reserve(self.headers.get('X-Real-IP',self.client_address[0])):return self.reply(429,{'error':'AI 查询额度暂时用完，请稍后再试；诗词库检索不受影响。'})
-   suggestions=interpret(query);self.reply(200,{'suggestions':suggestions})
+   suggestions=interpret(query)
+   online=retrieve(suggestions or [{'title':query,'author':'','quote':''}])
+   self.reply(200,{'suggestions':suggestions,'online':online})
   except Exception:
    self.reply(502,{'error':'AI 服务暂时无法响应，请使用作品名、作者或诗句直接检索。'})
 if __name__=='__main__':ThreadingHTTPServer(('127.0.0.1',int(os.environ.get('PORT','8789'))),Handler).serve_forever()

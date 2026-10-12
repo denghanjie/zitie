@@ -2,7 +2,7 @@ import sys
 sys.path.insert(0,str(__import__('pathlib').Path('server').resolve()))
 import importlib.util,json,os,tempfile,threading,unittest,urllib.request,urllib.error
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 spec=importlib.util.spec_from_file_location('ai','server/ai.py');ai=importlib.util.module_from_spec(spec);spec.loader.exec_module(ai)
 class APITest(unittest.TestCase):
  def setUp(self):
@@ -15,8 +15,8 @@ class APITest(unittest.TestCase):
    with urllib.request.urlopen(req) as r:return r.status,json.load(r)
   except urllib.error.HTTPError as e:return e.code,json.load(e)
  def test_success(self):
-  with patch.object(ai,'interpret',return_value=[{'title':'水调歌头','author':'苏轼','quote':''}]) as model:
-   code,data=self.post({'query':'但愿人长久'});self.assertEqual(code,200);self.assertNotIn('text',data);model.assert_called_once()
+  with patch.object(ai,'retrieve',return_value={'status':'completed','sources':[]}) as retrieve, patch.object(ai,'interpret',return_value=[{'title':'水调歌头','author':'苏轼','quote':''}]) as model:
+   code,data=self.post({'query':'但愿人长久'});self.assertEqual(code,200);self.assertNotIn('text',data);model.assert_called_once();retrieve.assert_called_once_with(data['suggestions']);self.assertEqual(data['online']['status'],'completed')
  def test_invalid(self):
   for q in ['',1,None,'a'*121]:self.assertEqual(self.post({'query':q})[0],400)
   self.assertEqual(self.post({'query':'李白'},'https://example.org')[0],403)
@@ -31,6 +31,23 @@ class APITest(unittest.TestCase):
  def test_model_validation(self):
   self.assertEqual(ai.clean_suggestions({'suggestions':[{'title':'诗','body':'invented','url':'evil'}]}),[{'title':'诗','author':'','quote':''}])
   with self.assertRaises(ValueError):ai.clean_suggestions({'text':'invented body'})
+class ProviderTest(unittest.TestCase):
+ def test_deepseek_request_and_untrusted_fields(self):
+  response=MagicMock();response.__enter__.return_value=response
+  response.read.return_value=json.dumps({'choices':[{'message':{'content':json.dumps({'suggestions':[{'title':'春晓','author':'孟浩然','quote':'春眠不觉晓','url':'http://127.0.0.1/secret','text':'模型编造正文','verified':True}]})}}]}).encode()
+  with patch.object(ai.urllib.request,'urlopen',return_value=response) as request:
+   hints=ai.interpret('春晓')
+  req=request.call_args.args[0];body=json.loads(req.data)
+  self.assertEqual(req.full_url,'https://api.deepseek.com/chat/completions')
+  self.assertEqual(body['messages'][1]['content'],'春晓')
+  self.assertEqual(body['model'],ai.MODEL)
+  self.assertEqual(request.call_args.kwargs['timeout'],25)
+  self.assertEqual(set(hints[0]),{'title','author','quote'})
+ def test_malformed_provider_response_rejected(self):
+  for payload in [{}, {'choices':[]}, {'choices':[{'message':{'content':'not json'}}]}, {'choices':[{'message':{'content':'{"text":"invented"}'}}]}]:
+   response=MagicMock();response.__enter__.return_value=response;response.read.return_value=json.dumps(payload).encode()
+   with patch.object(ai.urllib.request,'urlopen',return_value=response),self.assertRaises((ValueError,KeyError,IndexError)):ai.interpret('春晓')
+
 if __name__=='__main__':unittest.main()
 
 class CommunityAPITest(unittest.TestCase):

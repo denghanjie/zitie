@@ -54,6 +54,8 @@ for old in evidence:
    status='compared';reason='正文汉字与所列对照文本逐字一致；标点差异另列。这不是所有版本均无误的认证。'
   elif key=='poetry:xunzi-quanxue-excerpt' and a==b.replace('𫐓','輮') and w['author']==ref['author']=='荀子':
    status='retained';reason='明确选录四段；与对照节选逐字比较，仅“輮／𫐓”字形不同，保留正文来源的“輮”。通假字不作现代字替换，完整差异另列。'
+  elif key=='poetry:00b257d9fe3ddbfa' and key in scope_decisions and a.replace('小惠未遍','小惠未徧')==b and normal_author(w['author'])==normal_author(ref['author']):
+   status='retained';reason=scope_decisions[key]+' 已逐字比较，仅保留遍／徧异文；标点差异另列。'
   elif key.startswith('textbook:') and w['title'] in retained:
    status='retained';reason=retained[w['title']]+' 此条记录版本选择，不宣称逐字等同每个教材印次。'
   elif a in b and normal_author(w['author'])==normal_author(ref['author']):
@@ -68,7 +70,7 @@ for old in evidence:
  quality[key]=meta
  report.append({'key':key,'title':w['title'],'author':w['author'],'codepoints':len(text),'hanCharacters':len(han(text)),**meta,'sourceUrl':w['sourceUrl'],'characterDifferences':ops,'allCodepointDifferences':punct,'editorialChange':edits.get(key)})
 counts=dict(collections.Counter(r['status'] for r in report))
-summary={'revision':'2026-09-20-1','entries':len(report),'poetryEntries':len(poems),'textbookEntries':len(texts),'codepoints':sum(len(w['text']) for w in entries.values()),'counts':counts,'complete':False,'editorialEntries':len(edits),'method':'全量字符比对；移除空白后另比对标点及全部码点。对照本是公开整理本，可能与原资料有共同来源，不能冒充独立权威校勘。教材仅对应当前选用正文，未逐本核实所有印次。','remaining':'待补可靠底本、裁定异文及核实署名。未完成的记录不标为已校勘。'}
+summary={'revision':'2026-10-09-1','entries':len(report),'poetryEntries':len(poems),'textbookEntries':len(texts),'codepoints':sum(len(w['text']) for w in entries.values()),'counts':counts,'complete':False,'editorialEntries':len(edits),'method':'全量字符比对；移除空白后另比对标点及全部码点。对照本是公开整理本，可能与原资料有共同来源，不能冒充独立权威校勘。教材仅对应当前选用正文，未逐本核实所有印次。','remaining':'待补可靠底本、裁定异文及核实署名。未完成的记录不标为已校勘。'}
 outputs={'data/library/quality.json':json.dumps(quality,ensure_ascii=False,separators=(',',':'))+'\n','public/library/collation.json':json.dumps({'summary':summary,'entries':report},ensure_ascii=False,separators=(',',':'))+'\n'}
 for file,content in outputs.items():
  path=root/file
