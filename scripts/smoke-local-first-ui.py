@@ -42,8 +42,12 @@ async def main():
   await page.get_by_role('button',name='查找诗文 ↗',exact=True).click()
   await page.locator('#poem-query').fill('試讀')
   await page.get_by_role('button',name='✧ AI 帮我找',exact=True).click()
-  await page.get_by_role('button',name='秋夜試讀',exact=False).click()
+  await page.get_by_role('button',name='秋夜试读',exact=False).click()
   assert await page.get_by_role('button',name='停止等待',exact=True).is_visible()
+  assert await page.locator('#online-title').input_value()=='秋夜试读'
+  assert await page.locator('#online-text').input_value()=='江上清风起，山间明月来。\n闲看云水外，独坐夜窗前。'
+  await page.get_by_text('对照原始来源（原字形）',exact=True).click()
+  assert await page.get_by_text('江上清風起，山間明月來。',exact=False).count()>0
   selected='測試未經簡化。\n溪水流。'
   await page.locator('#online-text').fill(selected)
   await page.get_by_role('checkbox',name='我已打开来源',exact=False).check()
@@ -77,15 +81,15 @@ async def main():
   await page.get_by_role('button',name='查找诗文 ↗',exact=True).click()
   await page.locator('#poem-query').fill('第二次試讀')
   await page.get_by_role('button',name='✧ AI 帮我找',exact=True).click()
-  await page.get_by_role('button',name='秋夜試讀',exact=False).wait_for()
+  await page.get_by_role('button',name='秋夜试读',exact=False).wait_for()
   await page.get_by_role('button',name='停止等待',exact=True).click()
   await page.wait_for_timeout(2200)
-  assert await page.get_by_role('button',name='秋夜試讀',exact=False).is_visible()
+  assert await page.get_by_role('button',name='秋夜试读',exact=False).is_visible()
   assert await page.get_by_role('button',name='联网晚到候选',exact=False).count()==0
   await page.locator('#poem-query').fill('新的查找')
-  assert await page.get_by_role('button',name='秋夜試讀',exact=False).count()==0
+  assert await page.get_by_role('button',name='秋夜试读',exact=False).count()==0
   await page.get_by_role('button',name='查找',exact=True).click()
-  await page.get_by_role('button',name='秋夜試讀',exact=False).wait_for()
+  await page.get_by_role('button',name='秋夜试读',exact=False).wait_for()
   assert calls.count('hints')==2
   await page.screenshot(path=str(OUTPUT/'after-cancel.png'),full_page=True)
   assert not errors,errors

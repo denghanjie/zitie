@@ -21,7 +21,7 @@ function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  useEffect(()=>{if(inputMode==='paste')return;const el=dialog.current;el.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{el.close();document.body.style.overflow=previous}},[inputMode]);
  const correction=knownTextCorrection(draft.content);
  const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:editReviewedSource(d.source,v)}:{})}));
- const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey,...(w.provenance?{provenance:w.provenance}:{})}}));setInputMode('paste')};
+ const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey,...(w.original?{original:w.original}:{}),...(w.provenance?{provenance:w.provenance}:{})}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
  <div className="content-actions"><span>直接粘贴，或从资料库选择</span><div><button type="button" onClick={()=>setInputMode('search')}>查找诗文 ↗</button><button type="button" onClick={()=>setInputMode('textbook')}>教材选篇 ↗</button></div></div>
@@ -31,6 +31,7 @@ function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  {inputMode==='textbook'&&<TextbookPicker onApply={applyWork}/>}
  </dialog>
  {draft.source&&<p className="source-note">已填入：《{draft.source.title}》 · {draft.source.author}{draft.source.collection&&<> · {draft.source.collection}</>}{draft.source.provenance?.kind==='online-user-reviewed'&&<> · 用户核对，未经资料库校勘{draft.source.provenance.editedAfterReview?'（填入后已编辑）':''} · <a href={draft.source.url} target="_blank" rel="noreferrer">来源版本 {draft.source.provenance.revisionId} ↗</a></>} · 正文可继续修改</p>}
+ {(draft.source?.provenance?.source||draft.source?.original)&&<details className="source-note"><summary>对照导入来源原文（转换前）</summary><p>{(draft.source.provenance?.source||draft.source.original).title}</p><pre style={{whiteSpace:'pre-wrap'}}>{(draft.source.provenance?.source||draft.source.original).text}</pre></details>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
  {correction&&<p className="source-note" role="alert">这份《{correction.title}》含已确认的旧版用字差异。<button type="button" onClick={()=>change('content',correction.content)}>改用校订正文</button></p>}
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
