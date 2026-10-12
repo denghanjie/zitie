@@ -3,6 +3,7 @@ import {saveHistory} from './history.js';
 import {INK_LEVELS,normalizeInk,comparisonSvg} from './worksheet';
 import Feedback,{track} from './feedback';
 import {canUseImportedDraft} from './quality';
+import {editReviewedSource} from './online-search.js';
 import {textIntegrityIssue} from './editorial.js';
 import {migrateLibraryDraft,knownTextCorrection} from './text-corrections.js';
 import React,{useState,useEffect,useRef} from 'react';
@@ -13,13 +14,13 @@ import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
 import {TYPEFACES,normalizeTypeface,loadTypeface,FONT_SIZES,normalizeFontSize} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};if(!d.practiceProfile)Object.assign(d,{practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'});if(d.appearanceVersion!==1)Object.assign(d,{font:'wenkai',ink:'medium',traceStyle:'solid',appearanceVersion:1});return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize),ink:normalizeInk(d.ink),traceStyle:d.traceStyle==='outline'?'outline':'solid'})}catch{return {...example,appearanceVersion:1,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}}}
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};if(!d.practiceProfile)Object.assign(d,{practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'});if(d.appearanceVersion!==1)Object.assign(d,{font:'wenkai',ink:'medium',traceStyle:'solid',appearanceVersion:1});return (d.source?.provenance?value=>value:migrateLibraryDraft)({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize),ink:normalizeInk(d.ink),traceStyle:d.traceStyle==='outline'?'outline':'solid'})}catch{return {...example,appearanceVersion:1,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}}}
 function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  const [inputMode,setInputMode]=useState('paste');
  const dialog=useRef(null);
  useEffect(()=>{if(inputMode==='paste')return;const el=dialog.current;el.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{el.close();document.body.style.overflow=previous}},[inputMode]);
  const correction=knownTextCorrection(draft.content);
- const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:d.source?.provenance?.kind==='online-user-reviewed'?{...d.source,provenance:{...d.source.provenance,editedAfterReview:true}}:null}:{})}));
+ const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:editReviewedSource(d.source,v)}:{})}));
  const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey,...(w.provenance?{provenance:w.provenance}:{})}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
@@ -70,7 +71,7 @@ function App(){
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
   setBusy(true);setMessage('正在准备字形和笔顺…');
   try{
-   if(!await canUseImportedDraft(draft)){setError('已保存的资料库正文尚未完成校勘，请重新查找文字已对照的版本，或查看正文校勘记录。');return;}
+   if(!await canUseImportedDraft(draft)){setError(draft.source?.provenance&&!draft.source?.qualityKey?'已保存的来源核对记录已过期或不完整，请重新查找并核对来源后再生成。':'已保存的资料库正文尚未完成校勘，请重新查找文字已对照的版本，或查看正文校勘记录。');return;}
    const input={...draft,font:normalizeTypeface(draft.font),fontSize:normalizeFontSize(draft.fontSize)};
    const [data,fontGlyphs]=await Promise.all([loadCharacters(input.content),loadTypeface(input.font,input.content)]);
    const layoutInfo=input.mode==='article'?articleLayout(input):null;
@@ -97,7 +98,7 @@ function App(){
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}
- <p className="privacy">练习正文在本机排版；使用 AI 帮找时，仅查找线索发送给 DeepSeek。</p></section></main>
+ <p className="privacy">练习正文在本机排版；普通查找只检索本站资料。联网查找会将线索发送给百度；AI 帮找另发送给 DeepSeek，并查询网络来源。</p></section></main>
  {historyOpen&&<History onClose={()=>setHistoryOpen(false)} onOpen={openHistory}/>}
  <Feedback/>
  <footer>打印建议：A4 纸张 · 纵向 · 100% 比例 · 关闭浏览器页眉页脚 <span>笔顺数据：<a href="https://hanziwriter.org" target="_blank" rel="noreferrer">Hanzi Writer</a> / Make Me a Hanzi</span></footer>

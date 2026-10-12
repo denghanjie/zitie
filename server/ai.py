@@ -1,9 +1,47 @@
 """Loopback-only DeepSeek identification and independent online source retrieval."""
 import json, os, sqlite3, time, urllib.request, urllib.error
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import corpus, baidu
+from provider_runtime import ProviderGate
+
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from community import submit
-from online import retrieve
+from online import retrieve, NoRedirect
+MODEL_OPENER=urllib.request.build_opener(NoRedirect)
+MODEL_GATE = ProviderGate(capacity=2, timeout=18, cooldown=30)
+WIKI_GATE = ProviderGate(capacity=1, timeout=8, cooldown=60)
+LOCAL_SLOTS = threading.BoundedSemaphore(2)
+
+def local_search(query, limit=20):
+ if not LOCAL_SLOTS.acquire(blocking=False):raise OverflowError('Local corpus busy')
+ try:return corpus.search(query,limit=limit)
+ finally:LOCAL_SLOTS.release()
+
+def wiki_enabled():
+ return os.environ.get('WIKISOURCE_ENABLED', '0') == '1'
+
+def wiki_lookup(suggestions):
+ if not wiki_enabled():return {'provider':'wikisource','status':'disabled','sources':[], 'message':'维基文库为可选来源，当前未启用。'}
+ try:
+  result=WIKI_GATE.run(lambda: retrieve(suggestions))
+  result['sources']=[source for source in result.get('sources',[]) if not corpus.conflicts_with_library(source)]
+  if result['status'] in ('unavailable','partial'):WIKI_GATE.fail()
+  return {'provider':'wikisource',**result}
+ except Exception:return {'provider':'wikisource','status':'unavailable','sources':[], 'message':'维基文库暂不可用，未完成来源核对。'}
+
+def discover(query, suggestions=None):
+ hints=suggestions or [{'title':query,'author':'','quote':''}]
+ with ThreadPoolExecutor(max_workers=2) as pool:
+  b=pool.submit(baidu.retrieve,query,suggestions);w=pool.submit(wiki_lookup,hints)
+  br,wr=b.result(),w.result()
+ providers=[{'provider':'baidu',**{k:v for k,v in br.items() if k not in ('sources','discoveries')}}, {k:v for k,v in wr.items() if k!='sources'}]
+ sources=wr.get('sources',[]); discoveries=br.get('discoveries',[])
+ done=[p['status']=='completed' for p in providers if p['status']!='disabled']
+ status='completed' if done and all(done) else 'partial' if any(done) or sources or discoveries else 'unavailable'
+ return {'status':status,'sources':sources,'discoveries':discoveries,'providers':providers,'message':' '.join(p.get('message','') for p in providers)}
+
 KEY=os.environ.get('DEEPSEEK_API_KEY','')
 MODEL=os.environ.get('DEEPSEEK_MODEL','deepseek-chat')
 STATE=Path(os.environ.get('ZITIE_STATE_DIR','/var/lib/zitie'))
@@ -32,17 +70,22 @@ def reserve(ip,now=None):
 def interpret(query):
  body=json.dumps({'model':MODEL,'messages':[{'role':'system','content':SYSTEM},{'role':'user','content':query}],'response_format':{'type':'json_object'},'temperature':0,'max_tokens':500},ensure_ascii=False).encode()
  req=urllib.request.Request('https://api.deepseek.com/chat/completions',data=body,headers={'Authorization':'Bearer '+KEY,'Content-Type':'application/json'})
- with urllib.request.urlopen(req,timeout=25) as response:
-  payload=json.loads(response.read(100000))
+ with MODEL_OPENER.open(req,timeout=12) as response:
+  raw=response.read(100001)
+ if len(raw)>100000:raise ValueError('Model response too large')
+ payload=json.loads(raw)
  return clean_suggestions(json.loads(payload['choices'][0]['message']['content']))
 
 class Handler(BaseHTTPRequestHandler):
+ def setup(self):
+  super().setup();self.connection.settimeout(5)
+
  def log_message(self,*args):pass  # Do not log queries or credentials.
  def reply(self,status,payload):
   data=json.dumps(payload,ensure_ascii=False).encode();self.send_response(status)
   self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Cache-Control','no-store');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
  def do_GET(self):
-  if self.path=='/api/poetry/status':self.reply(200,{'available':bool(KEY)} )
+  if self.path=='/api/poetry/status':self.reply(200,{'available':bool(KEY),'baiduAvailable':baidu.status().get('configured',False),'baiduStatus':baidu.status(),'localAvailable':corpus.status().get('available',False),'wikisourceEnabled':wiki_enabled()} )
   else:self.reply(404,{'error':'接口不存在。'})
  def community(self):
   if self.headers.get('Origin','') not in ('','https://zitie.denghanjie.vip','http://127.0.0.1:5173','http://localhost:5173'):return self.reply(403,{'error':'不允许的请求来源。'})
@@ -58,20 +101,56 @@ class Handler(BaseHTTPRequestHandler):
   except Exception:self.reply(503,{'error':'暂时无法保存，请稍后重试。'})
  def do_POST(self):
   if self.path in ('/api/feedback','/api/events'):return self.community()
-  if self.path!='/api/poetry/hints':return self.reply(404,{'error':'接口不存在。'})
+  if self.path not in ('/api/poetry/hints','/api/poetry/search','/api/poetry/discover'):return self.reply(404,{'error':'接口不存在。'})
   if self.headers.get('Origin','') not in ('','https://zitie.denghanjie.vip','http://127.0.0.1:5173','http://localhost:5173'):return self.reply(403,{'error':'不允许的请求来源。'})
-  if not KEY:return self.reply(503,{'error':'AI 服务暂未配置，仍可使用作品名或诗句检索。'})
+  if self.headers.get('Content-Type','').split(';')[0]!='application/json':return self.reply(415,{'error':'需要 JSON 请求。'})
   try:
    n=int(self.headers.get('Content-Length','0'))
    if n<=0 or n>2048:return self.reply(413,{'error':'查询过长。'})
    body=json.loads(self.rfile.read(n));query=body.get('query','').strip()
    if not isinstance(query,str) or not 2<=len(query)<=120:return self.reply(400,{'error':'请输入 2 至 120 字的查找线索。'})
   except (ValueError,AttributeError,TypeError):return self.reply(400,{'error':'查询格式不正确。'})
+  if self.path=='/api/poetry/search':
+   try:return self.reply(200,{'status':'completed','sources':local_search(query),'message':'已查询本地扩展古诗文来源；未经本站校勘，请核对后使用。'})
+   except Exception:return self.reply(503,{'status':'unavailable','sources':[],'message':'本地扩展资料暂不可用；浏览器资料库仍可检索。'})
+  if self.path=='/api/poetry/hints' and not KEY:return self.reply(503,{'error':'AI 服务暂未配置，仍可使用本地检索及已配置的百度搜索。'})
   try:
-   if not reserve(self.headers.get('X-Real-IP',self.client_address[0])):return self.reply(429,{'error':'AI 查询额度暂时用完，请稍后再试；诗词库检索不受影响。'})
-   suggestions=interpret(query)
-   online=retrieve(suggestions or [{'title':query,'author':'','quote':''}])
-   self.reply(200,{'suggestions':suggestions,'online':online})
+   if not reserve(self.headers.get('X-Real-IP',self.client_address[0])):return self.reply(429,{'error':'外部查询额度暂时用完，请稍后再试；本地诗词检索不受影响。'})
+   suggestions=[]; identification=None
+   if self.path=='/api/poetry/hints':
+    try:
+     suggestions=MODEL_GATE.run(lambda:interpret(query));identification={'provider':'deepseek','status':'completed','message':'AI 仅提供识别线索，不生成正文。'}
+    except Exception:identification={'provider':'deepseek','status':'unavailable','message':'AI 识别暂不可用，改用原始查询查找来源。'}
+   local_sources=[]
+   if suggestions:
+    try:
+     unique={}
+     for hint in suggestions[:3]:
+      for source in local_search(' '.join(filter(None,[hint.get('title'),hint.get('author')])) or hint.get('quote',''),limit=8):
+       unique.setdefault((source['url'],source['sourceIndex']),source)
+     local_sources=list(unique.values())[:24]
+    except Exception:pass  # Direct local query has its own independently reported status.
+   online=discover(query,suggestions)
+   if identification:online['providers'].insert(0,identification)
+   self.reply(200,{'suggestions':suggestions,'localSources':local_sources,'online':online})
   except Exception:
    self.reply(502,{'error':'AI 服务暂时无法响应，请使用作品名、作者或诗句直接检索。'})
-if __name__=='__main__':ThreadingHTTPServer(('127.0.0.1',int(os.environ.get('PORT','8789'))),Handler).serve_forever()
+class BoundedHTTPServer(ThreadingHTTPServer):
+ daemon_threads=True
+ def __init__(self,*args,**kwargs):
+  self.request_slots=threading.BoundedSemaphore(32);super().__init__(*args,**kwargs)
+ def process_request(self,request,address):
+  if not self.request_slots.acquire(blocking=False):
+   self.shutdown_request(request);return
+  try:super().process_request(request,address)
+  except Exception:self.request_slots.release();raise
+ def process_request_thread(self,request,address):
+  try:super().process_request_thread(request,address)
+  finally:self.request_slots.release()
+
+if __name__=='__main__':
+ # Build/validate the server-local index before accepting interactive requests.
+ # A damaged corpus must not prevent static-library/feedback service recovery.
+ try:corpus.search('不第后赋菊',limit=1)
+ except Exception:pass
+ BoundedHTTPServer(('127.0.0.1',int(os.environ.get('PORT','8789'))),Handler).serve_forever()

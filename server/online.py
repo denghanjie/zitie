@@ -3,6 +3,7 @@
 A fetched source is evidence of what a revision says, not an editorial approval.
 The caller must keep online candidates separate from its collated local library.
 """
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
@@ -115,7 +116,7 @@ def fetch_source(candidate):
     quote = hint.get('quote', '')
     quote_key = normalized(quote)
     matched = quote_key in normalized(text) if len(quote_key) >= 4 else None
-    return {'title': parsed['title'][:240], 'url': 'https://zh.wikisource.org/w/index.php?oldid=' + str(revision),
+    return {'provider': 'wikisource', 'acquiredAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'), 'title': parsed['title'][:240], 'url': 'https://zh.wikisource.org/w/index.php?oldid=' + str(revision),
             'text': text, 'revisionId': revision, 'verification': 'source_fetched',
             'authorHint': hint.get('author', ''), 'quote': quote, 'matchedQuote': matched,
             'quoteCheck': 'not_provided' if matched is None else 'matched' if matched else 'not_found',
