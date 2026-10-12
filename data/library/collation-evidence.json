@@ -5941,27 +5941,29 @@
       "key": "poetry:33f5ebee27d7b663",
       "title": "无题二首 一",
       "author": "李商隐",
-      "characters": 42,
-      "textHash": "bcd111dd67af4e7a8b8398d06bca96f4cf77fcbd3dba3c1de88bf9292a51eac4",
-      "status": "excerpt-match",
+      "characters": 56,
+      "textHash": "aa553daa7ee4990e4ca848ff4c64679787c237e11f57a74cf36dbbe6e92d3bfe",
       "reference": {
-        "title": "无题·凤尾香罗薄几重",
+        "title": "无题（凤尾香罗薄几重）",
         "author": "李商隐",
-        "url": "https://github.com/zhouzhaoxin/GuShiWen/blob/d328fb960b51430bb7271ed8e091cc1a48f1d463/tangshi5/%E5%94%90%E8%AF%97%E4%B8%89%E7%99%BE%E9%A6%96.json",
-        "index": 172
+        "url": "https://article.xuexi.cn/html/9447177938874435023.html?from=singlemessage&pid=&ptype=-1&share_to=wx_single&source=share&study_style_id=feeds_default",
+        "publisher": "中国出版集团·诗词中国（学习强国刊载）",
+        "published": "2019-03-13",
+        "accessed": "2026-10-09"
       },
-      "differences": [
+      "referenceText": "凤尾香罗薄几重，碧文圆顶夜深缝。扇裁月魄羞难掩，车走雷声语未通。曾是寂寥金烬暗，断无消息石榴红。斑骓只系垂杨岸，何处西南待好风。",
+      "decision": "补齐《无题二首》第一首缺失的末联，按中国出版集团·诗词中国2019-03-13刊本选用“何处西南待好风”。原对照本作“任”，属另见异文，本次版本选择不证明“任”为错字；收录第一首完整八句，不合并第二首。",
+      "alternativeReferences": [
         {
-          "type": "insert",
-          "offset": 42,
-          "old": "",
-          "new": "斑骓只系垂杨岸何处西南任好风",
-          "context": "断无消息石榴红"
+          "reference": {
+            "title": "无题·凤尾香罗薄几重",
+            "author": "李商隐",
+            "url": "https://github.com/zhouzhaoxin/GuShiWen/blob/d328fb960b51430bb7271ed8e091cc1a48f1d463/tangshi5/%E5%94%90%E8%AF%97%E4%B8%89%E7%99%BE%E9%A6%96.json",
+            "index": 172
+          },
+          "referenceText": "凤尾香罗薄几重，碧文圆顶夜深缝。扇裁月魄羞难掩，车走雷声语未通。曾是寂寥金烬暗，断无消息石榴红。斑骓只系垂杨岸，何处西南任好风。"
         }
-      ],
-      "ratio": 1.02,
-      "authorMatch": true,
-      "referenceText": "凤尾香罗薄几重，碧文圆顶夜深缝。扇裁月魄羞难掩，车走雷声语未通。曾是寂寥金烬暗，断无消息石榴红。斑骓只系垂杨岸，何处西南任好风。"
+      ]
     },
     {
       "key": "poetry:f29efd8b6ed87bef",
@@ -22311,34 +22313,36 @@
       "key": "poetry:00b257d9fe3ddbfa",
       "title": "曹刿论战",
       "author": "先秦：左丘明",
-      "characters": 226,
-      "textHash": "77c2a3b5a12697fd604b45295c6bf929db6d987361cfdc94eda9d7e86d0c586a",
-      "status": "difference",
+      "characters": 222,
+      "textHash": "ee7036e7565507907f3e67033aa74231964008e341579d8aadf7bfc6107d908e",
       "reference": {
         "title": "曹刿论战",
         "author": "左丘明",
         "url": "https://github.com/aopao/chinese-gushiwen/blob/c2345d0abf2404b8b3601e4afc2e8fd12f90d6c8/guwen/guwen0-1000.json",
         "index": 41
       },
-      "differences": [
+      "referenceText": "十年春，齐师伐我。公将战。曹刿请见。其乡人曰：“肉食者谋之，又何间焉？”刿曰：“肉食者鄙，未能远谋。”乃入见。问：“何以战？”公曰：“衣食所安，弗敢专也，必以分人。”对曰：“小惠未徧，民弗从也。”公曰：“牺牲玉帛，弗敢加也，必以信。”对曰：“小信未孚，神弗福也。”公曰：“小大之狱，虽不能察，必以情。”对曰：“忠之属也。可以一战。战则请从。”\n\n　　公与之乘，战于长勺。公将鼓之。刿曰：“未可。”齐人三鼓。刿曰：“可矣。”齐师败绩。公将驰之。刿曰：“未可。”下视其辙，登轼而望之，曰：“可矣。”遂逐齐师。\n\n　　既克，公问其故。对曰：“夫战，勇气也。一鼓作气，再而衰，三而竭。彼竭我盈，故克之，夫大国，难测也，惧有伏焉。吾视其辙乱，望其旗靡，故逐之。”",
+      "decision": "将“（遍 一作：徧)”移出打印正文并保留于校勘说明；正文继续采用“小惠未遍”，不强改为对照本的“徧”。依据香港教育大学所藏简振雷论文附录任务单，将“故克之，夫大国”断为“故克之。夫大国”；这是现代整理标点选择，不是古文字符纠错。任务单印“偏”并有通“遍”手注，仅用作夹注边界与断句依据，不据此改字。",
+      "editorialReferences": [
         {
-          "type": "replace",
-          "offset": 63,
-          "old": "遍",
-          "new": "徧",
-          "context": "分人对曰小惠未遍民弗从也公曰牺"
-        },
-        {
-          "type": "delete",
-          "offset": 118,
-          "old": "遍一作徧",
-          "new": "",
-          "context": "以一战战则请从遍一作徧公与之乘战于长"
+          "title": "中学古诗文生命意识解读研究：附录《曹刿论战》任务单",
+          "author": "简振雷",
+          "url": "https://www.lib.eduhk.hk/pure-data/pub/201903181.pdf#page=66",
+          "institution": "香港教育大学",
+          "documentDate": "2019-05",
+          "teachingDate": "2018-05-17",
+          "pdfPages": [
+            66,
+            67
+          ],
+          "printedPages": [
+            65,
+            66
+          ],
+          "accessed": "2026-10-09",
+          "note": "2019年5月为论文申请日期，2018年5月17日为附录教学时间。扫描任务单印“小惠未偏”，首张有通“遍”手注；本次只据此核对正文与现代夹注的边界及“故克之。夫大国”的标点，不用该字形改动本站“遍”。"
         }
-      ],
-      "ratio": 1.0166,
-      "authorMatch": true,
-      "referenceText": "十年春，齐师伐我。公将战。曹刿请见。其乡人曰：“肉食者谋之，又何间焉？”刿曰：“肉食者鄙，未能远谋。”乃入见。问：“何以战？”公曰：“衣食所安，弗敢专也，必以分人。”对曰：“小惠未徧，民弗从也。”公曰：“牺牲玉帛，弗敢加也，必以信。”对曰：“小信未孚，神弗福也。”公曰：“小大之狱，虽不能察，必以情。”对曰：“忠之属也。可以一战。战则请从。”\n\n　　公与之乘，战于长勺。公将鼓之。刿曰：“未可。”齐人三鼓。刿曰：“可矣。”齐师败绩。公将驰之。刿曰：“未可。”下视其辙，登轼而望之，曰：“可矣。”遂逐齐师。\n\n　　既克，公问其故。对曰：“夫战，勇气也。一鼓作气，再而衰，三而竭。彼竭我盈，故克之，夫大国，难测也，惧有伏焉。吾视其辙乱，望其旗靡，故逐之。”"
+      ]
     },
     {
       "key": "poetry:02cc5eff685aec95",

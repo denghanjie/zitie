@@ -10,7 +10,7 @@ export function applyEditorial(work,key=`poetry:${work.id}`){
  const edit=EDITORIAL_EDITS.find(e=>e.key===key);
  if(!edit)return work;
  if(work.text!==edit.beforeText&&work.text!==edit.afterText)throw Error(`校勘版本不匹配：${work.title||edit.titleBefore}`);
- return {...work,text:edit.afterText,title:edit.titleAfter,author:edit.authorAfter,editorialRevision:EDITORIAL_REVISION,editorialNote:edit.reason,editorialSourceUrl:edit.reference.url};
+ return {...work,text:edit.afterText,title:edit.titleAfter,author:edit.authorAfter,editorialRevision:edit.revision||EDITORIAL_REVISION,editorialNote:edit.reason,editorialSourceUrl:edit.reference.url};
 }
 export function editorialTextCorrection(content){
  const edit=EDITORIAL_EDITS.find(e=>e.beforeText!==e.afterText&&compact(e.beforeText)===compact(content));
