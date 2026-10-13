@@ -7,7 +7,7 @@ export const canApplyWork=(key)=>['compared','retained'].includes(qualityFor(key
 export async function canUseImportedDraft(draft){
  if(!draft.source)return true;
  if(draft.source.qualityKey)return canApplyWork(draft.source.qualityKey);
- if(isReviewedOnlineDraft(draft))return true;
+ if(draft.source.provenance)return await isReviewedOnlineDraft(draft);
  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(draft.content));
  const hash=[...new Uint8Array(bytes)].map(x=>x.toString(16).padStart(2,'0')).join('');
  return Object.values(ledger).some(r=>r.textHash===hash&&['compared','retained'].includes(r.status));

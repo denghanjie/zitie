@@ -1,0 +1,453 @@
+{
+  "schemaVersion": 1,
+  "provider": "local-corpus",
+  "repository": "https://github.com/chinese-poetry/chinese-poetry",
+  "revisionId": "b8594f81a89752241442f2ce267d6f66f96704ee",
+  "acquiredAt": "2026-10-12T00:00:00Z",
+  "license": "MIT",
+  "licenseFile": "LICENSE.txt",
+  "normalization": "OpenCC-js 1.4.2 t→cn / cn→t; NFKC; remove punctuation, symbols, separators, controls; lowercase. Raw display text unchanged.",
+  "sourceRecords": 57629,
+  "indexedRecords": 56831,
+  "excludedRecords": 544,
+  "skippedRecords": 233,
+  "overlapInputs": [
+    {
+      "path": "public/library/works.json",
+      "sha256": "6bd657d124cb456dc75f46e3cb0419e8a44c744a870ae8e2715be1176c0f5df2"
+    },
+    {
+      "path": "public/library/textbooks.json",
+      "sha256": "b8454fd4315a715c041facfe5bc48c490effe8bea0267a6f308a32eedb3f799d"
+    },
+    {
+      "path": "data/library/editorial.json",
+      "sha256": "55372f5c1ffe9d7c6e2a3a48e2448fee08ffed68937ae880094fd81c06111ecd"
+    },
+    {
+      "path": "public/library/collation.json",
+      "sha256": "6f91a45058e63a185046413576dfbe8ced6fd5556ca4dd308648d48ca58290dc"
+    }
+  ],
+  "exclusionSha256": "3469a8e0e1371a1a8f243feaa1160d421aff1431a96903e8222fa7284d65b290",
+  "protectedIndex": {
+    "file": "protected.index.json.gz.b64",
+    "sha256": "bf5aa88ae40d0c7173116f5ccdb69f55f764f8b8706c18fb23940f06a5c0bd82",
+    "bytes": 1653213
+  },
+  "shards": [
+    {
+      "file": "poet.tang.0.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.0.json",
+      "records": 994,
+      "sha256": "d67602438587b51c4313ea747531f13986349b8998af40253ff4d57deb76fbbf",
+      "bytes": 719629
+    },
+    {
+      "file": "poet.tang.1000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.1000.json",
+      "records": 975,
+      "sha256": "adb8a108bb4a72471f114ce7a992ef2a927e3699affb45ccadf01a6c5bcbdbba",
+      "bytes": 869234
+    },
+    {
+      "file": "poet.tang.10000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.10000.json",
+      "records": 975,
+      "sha256": "ee1b863e97751b35160caa496ee6f8f0cc0894ca09d8344605c1d15e6a8094d9",
+      "bytes": 1179776
+    },
+    {
+      "file": "poet.tang.11000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.11000.json",
+      "records": 945,
+      "sha256": "65af821f9d94f417910dea14dee6c08d592de1411286b432d5d2ecf48c5d2fa0",
+      "bytes": 757944
+    },
+    {
+      "file": "poet.tang.12000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.12000.json",
+      "records": 987,
+      "sha256": "bb39232af32e83541cd9ad8f11688acd0c9b860e39ff38838ad5bf007aea7627",
+      "bytes": 813723
+    },
+    {
+      "file": "poet.tang.13000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.13000.json",
+      "records": 989,
+      "sha256": "cb4287838d48d46fb1155beba4262a5a70ea1d8ca258c7af4bec73cdcfeb442e",
+      "bytes": 764326
+    },
+    {
+      "file": "poet.tang.14000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.14000.json",
+      "records": 990,
+      "sha256": "ed261979974a5c4878315d04c07a2e6a67409288ac2030e9f60be7dea2b7c090",
+      "bytes": 751237
+    },
+    {
+      "file": "poet.tang.15000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.15000.json",
+      "records": 991,
+      "sha256": "2be8cfdc759aed66ce2b7ec18eabc196f32518b0d08cd2c1e1c6dcf06119ade4",
+      "bytes": 754132
+    },
+    {
+      "file": "poet.tang.16000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.16000.json",
+      "records": 995,
+      "sha256": "ebbf2ce33741d7548b51a3f59afe0fc133298d4ce91a8099b3f65a3f8796e92f",
+      "bytes": 684882
+    },
+    {
+      "file": "poet.tang.17000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.17000.json",
+      "records": 994,
+      "sha256": "697f6785da355c4ed8d2a72ac060d406c72877d4cfcc268a22791e3bf933ee33",
+      "bytes": 930854
+    },
+    {
+      "file": "poet.tang.18000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.18000.json",
+      "records": 988,
+      "sha256": "6aa12bc54110f429a6e5651dcd12aa39ba5e0b08386aecfaf8a13d3200445a75",
+      "bytes": 1039164
+    },
+    {
+      "file": "poet.tang.19000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.19000.json",
+      "records": 991,
+      "sha256": "1a49efbfac9488a42e2e0d4e9f3ba283dfd319cad7fc42e89aca3b0fd2826b84",
+      "bytes": 799189
+    },
+    {
+      "file": "poet.tang.2000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.2000.json",
+      "records": 986,
+      "sha256": "b40b3afb1b649bd7a86eddca150bb81d592fcbd5c5f628767e50d71d2c7afef6",
+      "bytes": 754195
+    },
+    {
+      "file": "poet.tang.20000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.20000.json",
+      "records": 999,
+      "sha256": "e322250ed9a7e5c216f1a94dda027aed456783b1761d69c6038292ea0665d9c2",
+      "bytes": 897562
+    },
+    {
+      "file": "poet.tang.21000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.21000.json",
+      "records": 996,
+      "sha256": "b5e62c27548ff2615934759d09ebd4fbb9ce1c641826be99e5a5d26cb02db983",
+      "bytes": 1143362
+    },
+    {
+      "file": "poet.tang.22000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.22000.json",
+      "records": 993,
+      "sha256": "65a699a60894b2e6d55f14a44240e552059ac402b4486c7498dd132a9fd3e9b2",
+      "bytes": 1060797
+    },
+    {
+      "file": "poet.tang.23000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.23000.json",
+      "records": 994,
+      "sha256": "61239331a7dc6e2e28518f4e0455ec6f213c5a305066d4b2079cb8c132c82e13",
+      "bytes": 820718
+    },
+    {
+      "file": "poet.tang.24000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.24000.json",
+      "records": 999,
+      "sha256": "65a8e2a495c9ae15a74f8b3d0321496223b12e578a43bf2bdf891e5f864ed0f0",
+      "bytes": 875042
+    },
+    {
+      "file": "poet.tang.25000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.25000.json",
+      "records": 1000,
+      "sha256": "a42dc8d40fc775d2c2abb48167d3757e78aa32b52a6c4d7260675e136b60a228",
+      "bytes": 777320
+    },
+    {
+      "file": "poet.tang.26000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.26000.json",
+      "records": 1000,
+      "sha256": "a63f66004c0fcb550509428295a7a7dc9e9009424936cfb81f989dfef7daa6ed",
+      "bytes": 707729
+    },
+    {
+      "file": "poet.tang.27000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.27000.json",
+      "records": 993,
+      "sha256": "c3c1ac88629990b418f6c22cb22780e807730966f037f46a1e2392c9a13345d2",
+      "bytes": 664162
+    },
+    {
+      "file": "poet.tang.28000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.28000.json",
+      "records": 984,
+      "sha256": "0ca5bb58f9091bc392b75d938e4a8e4a2e58c6cf857e685a792eac8648664f3d",
+      "bytes": 720427
+    },
+    {
+      "file": "poet.tang.29000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.29000.json",
+      "records": 964,
+      "sha256": "446b872ed2cfaa7952a2733c0de489313b30ca47cd1d542fc07a3340ad26bde9",
+      "bytes": 777181
+    },
+    {
+      "file": "poet.tang.3000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.3000.json",
+      "records": 989,
+      "sha256": "34ba217c652eee47ca0796c1807c8b420f0aa3c3a05827a4d2c467f9aaf09974",
+      "bytes": 829762
+    },
+    {
+      "file": "poet.tang.30000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.30000.json",
+      "records": 994,
+      "sha256": "3a61c770597c5420d6bc51d8a55702156f6e7b636c6b297681fbe478aad3c0a4",
+      "bytes": 718806
+    },
+    {
+      "file": "poet.tang.31000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.31000.json",
+      "records": 1000,
+      "sha256": "763acac58888340216bfc26b64ac20f1b0f22c4ad8eeca163b991a501642c8ad",
+      "bytes": 746454
+    },
+    {
+      "file": "poet.tang.32000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.32000.json",
+      "records": 993,
+      "sha256": "1d7f9164972d02ed395d8cb881e7a5e285c8e974e370306f1e8c37ce9ff2641e",
+      "bytes": 768895
+    },
+    {
+      "file": "poet.tang.33000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.33000.json",
+      "records": 997,
+      "sha256": "89b9a057b7d25dc53c6c2a15031b4f7f5dba689cc60fbca6a118c078062e5d73",
+      "bytes": 814572
+    },
+    {
+      "file": "poet.tang.34000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.34000.json",
+      "records": 1000,
+      "sha256": "61316611135f86be1cdaaacf9acfc2680067d1fadd4e0ddc416bd468eee8aa79",
+      "bytes": 788130
+    },
+    {
+      "file": "poet.tang.35000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.35000.json",
+      "records": 1000,
+      "sha256": "b4b93bf340d65dae798715acdeb886dc86bd8fe7384efeb47c3c1813a524d7fb",
+      "bytes": 694169
+    },
+    {
+      "file": "poet.tang.36000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.36000.json",
+      "records": 1000,
+      "sha256": "ce0f19376cec9e2e1b62e5faba37cebbfa63d6d682867558a503604fe1a85605",
+      "bytes": 737282
+    },
+    {
+      "file": "poet.tang.37000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.37000.json",
+      "records": 995,
+      "sha256": "4bf3c94b59e000a9aea672c5edf132a6feed3a48f87102c04eb5a329d705a613",
+      "bytes": 678737
+    },
+    {
+      "file": "poet.tang.38000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.38000.json",
+      "records": 997,
+      "sha256": "46dfe832c51e2dad05416e50aadd62c47c7379ed9568feb08b666c45b884d0c6",
+      "bytes": 744280
+    },
+    {
+      "file": "poet.tang.39000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.39000.json",
+      "records": 998,
+      "sha256": "f63e877af6a3f56e3de0fab749a11f25b6e3a5ef44c6db71e43927aba06ca4f4",
+      "bytes": 755710
+    },
+    {
+      "file": "poet.tang.4000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.4000.json",
+      "records": 990,
+      "sha256": "702aac12cbe7cef268e1ffc857ff8f2f63b607edc1220aff274d03feb55bc22c",
+      "bytes": 922925
+    },
+    {
+      "file": "poet.tang.40000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.40000.json",
+      "records": 1000,
+      "sha256": "08325d4be3b3532a6f53f2a7f5f0ec08982605354be0960fc14ea4395c5032d5",
+      "bytes": 647697
+    },
+    {
+      "file": "poet.tang.41000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.41000.json",
+      "records": 997,
+      "sha256": "d09d12d924200998a1fe657816af7e4964097a61766bf758e18c3bb710cfa2c2",
+      "bytes": 682454
+    },
+    {
+      "file": "poet.tang.42000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.42000.json",
+      "records": 999,
+      "sha256": "c3bc61551d7d613a0484ffed98abc46db6da04dc4aba1a7d8a3a80594064ffa4",
+      "bytes": 730404
+    },
+    {
+      "file": "poet.tang.43000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.43000.json",
+      "records": 996,
+      "sha256": "4a61ec55406aca8bd5c0d95ae43d54f2a9a7b8aa9d61105555879887df63005c",
+      "bytes": 811321
+    },
+    {
+      "file": "poet.tang.44000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.44000.json",
+      "records": 1000,
+      "sha256": "491e0ace7d0e6d24b8cdecfcbee80eb3818cd0373ff432aa253281ae9b4ce781",
+      "bytes": 729710
+    },
+    {
+      "file": "poet.tang.45000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.45000.json",
+      "records": 1000,
+      "sha256": "8fb1cc8b6fd2886255342cc669d8e01244b56c61f2341bbe58c66bbd2b976c1f",
+      "bytes": 830202
+    },
+    {
+      "file": "poet.tang.46000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.46000.json",
+      "records": 1000,
+      "sha256": "2a079c5ae2d6b9585fc93a0eac6e9ef911b9f5ad4931be434644e3712449d5e3",
+      "bytes": 748878
+    },
+    {
+      "file": "poet.tang.47000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.47000.json",
+      "records": 999,
+      "sha256": "8f8b1b6e81a8e7bf3dddedbb9572bc04ea72ad5c8c1e0bf05c894423591fca84",
+      "bytes": 718338
+    },
+    {
+      "file": "poet.tang.48000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.48000.json",
+      "records": 993,
+      "sha256": "66507c1836b05cfa1e70549a2777928376da3e0a537fa3e7fa73414ae9bb28ad",
+      "bytes": 561614
+    },
+    {
+      "file": "poet.tang.49000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.49000.json",
+      "records": 996,
+      "sha256": "c5bb465f3b1b73a59da5cb585a049976584edefb7708afcdedbf14c072397ab9",
+      "bytes": 676619
+    },
+    {
+      "file": "poet.tang.5000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.5000.json",
+      "records": 977,
+      "sha256": "6407ccdefde058e9f33d46ed2bc0515798f3d732399d709b621b0bf600bb664c",
+      "bytes": 847900
+    },
+    {
+      "file": "poet.tang.50000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.50000.json",
+      "records": 955,
+      "sha256": "544356221d0db0d1a59e732de000fdf7a86d4edf4490e74608b91939b4b9a1bc",
+      "bytes": 1260322
+    },
+    {
+      "file": "poet.tang.51000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.51000.json",
+      "records": 936,
+      "sha256": "a7a7abe68531347cdb239d31448458c0976b417bcbea314d9ae58c92d06d9104",
+      "bytes": 1093620
+    },
+    {
+      "file": "poet.tang.52000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.52000.json",
+      "records": 972,
+      "sha256": "a3dd0b3f6c6d5da5e71a0693a7944d316f9c953e3580cd2d27af9568a60ff92d",
+      "bytes": 1109241
+    },
+    {
+      "file": "poet.tang.53000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.53000.json",
+      "records": 965,
+      "sha256": "2987d1ac00bff0c7b8c3390b492bd7b73d50aab0729c123f5d30f65f8b738eab",
+      "bytes": 933379
+    },
+    {
+      "file": "poet.tang.54000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.54000.json",
+      "records": 980,
+      "sha256": "bc13e055da170703064531a7f8607510e415f0b1aba49accd50942995ddfcd97",
+      "bytes": 941979
+    },
+    {
+      "file": "poet.tang.55000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.55000.json",
+      "records": 964,
+      "sha256": "e297607567e509ad1035c75efa83a04ee953ce6a5e3cadbc598617a98527c408",
+      "bytes": 835041
+    },
+    {
+      "file": "poet.tang.56000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.56000.json",
+      "records": 989,
+      "sha256": "ec37460c8f7ad4bee87c0c49ffdf5825153f0e40d7b7919c47d2ec06889d2515",
+      "bytes": 898266
+    },
+    {
+      "file": "poet.tang.57000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.57000.json",
+      "records": 589,
+      "sha256": "b3872545d0f9acfce7a043e474732efc0d0586603fd02b089d09243a6f682b32",
+      "bytes": 432441
+    },
+    {
+      "file": "poet.tang.6000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.6000.json",
+      "records": 948,
+      "sha256": "eede7744787d609fdc2755e0dd9d686b59e0d5749ac8de6576d59ad92000985d",
+      "bytes": 826515
+    },
+    {
+      "file": "poet.tang.7000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.7000.json",
+      "records": 967,
+      "sha256": "5e3085681e96bbd9e909514bdd29158a70712ba3b126d850bb7f8b850f07c80c",
+      "bytes": 855792
+    },
+    {
+      "file": "poet.tang.8000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.8000.json",
+      "records": 954,
+      "sha256": "fc7354b359dd77bafc27136fc228be101e73add57e59b2ed99a454cad245862c",
+      "bytes": 1011040
+    },
+    {
+      "file": "poet.tang.9000.index.json.gz.b64",
+      "sourcePath": "全唐诗/poet.tang.9000.json",
+      "records": 979,
+      "sha256": "354196cb99d00e851d4d0f5b60de4b88d0840752ffdbd4edf71f8472ba0dbad4",
+      "bytes": 878933
+    },
+    {
+      "file": "yuding-733.index.json.gz.b64",
+      "sourcePath": "御定全唐詩/json/733.json",
+      "records": 1,
+      "sha256": "c95dfe74f208a427fdc336678a5862f07f2e5a51a44ba13cb1bfdf8bfe7f34aa",
+      "bytes": 618
+    }
+  ]
+}

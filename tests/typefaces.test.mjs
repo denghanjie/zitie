@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {TYPEFACES,normalizeTypeface,loadTypeface} from '../src/typefaces.js';
 import {paginate,pageSvg} from '../src/worksheet.js';
 const manifest=JSON.parse(fs.readFileSync('public/fonts/manifest.json','utf8'));
-for(const id of ['serif','sans','wenkai']){
+for(const id of ['serif','sans','wenkai','maoken']){
  const m=manifest.fonts[id];let count=0;
  for(const block of m.blocks){
   const data=JSON.parse(fs.readFileSync(`public/fonts/${id}/${block}.json`,'utf8'));
@@ -11,9 +11,9 @@ for(const id of ['serif','sans','wenkai']){
    assert.equal(Math.floor(c.codePointAt(0)/128),block);assert(g.d.startsWith('M'));assert(g.u>0&&g.a>=0);assert(!/[<>"']/.test(g.d));count++;
   }
  }
- assert.equal(count,m.glyphCount);assert(count>10000);assert(fs.readFileSync(`public/fonts/${id}-OFL.txt`,'utf8').includes('SIL OPEN FONT LICENSE'));
+ assert.equal(count,m.glyphCount);assert(count>(id==='maoken'?6700:10000));assert(fs.readFileSync(`public/fonts/${id}-OFL.txt`,'utf8').includes('SIL OPEN FONT LICENSE'));
 }
-assert.equal(normalizeTypeface(undefined),'kai');assert.equal(normalizeTypeface('unknown'),'kai');assert.equal(TYPEFACES.length,4);
+assert.equal(normalizeTypeface(undefined),'kai');assert.equal(normalizeTypeface('unknown'),'kai');assert.equal(TYPEFACES.length,5);
 let calls=0,failNext=false;
 const originalFetch=globalThis.fetch;
 globalThis.fetch=async url=>{
@@ -28,6 +28,11 @@ try{
  await loadTypeface('serif','永永');assert.equal(calls,before,'reuse cached block');
  const sans=await loadTypeface('sans','永，春眠不觉晓。');
  assert(serif['永']);assert(sans['永']);assert.notEqual(serif['永'].d,sans['永'].d);
+ const maoken=await loadTypeface('maoken','青山横北郭白水绕东城此地一为别孤蓬万里征浮云游子意落日故人情挥手自兹去萧萧班马鸣永，。');
+ for(const c of '青山横北郭白水绕东城此地一为别孤蓬万里征浮云游子意落日故人情挥手自兹去萧萧班马鸣永，。')assert(maoken[c],`hardpen sample covers ${c}`);
+ const wk=await loadTypeface('wenkai','永');assert.notEqual(maoken['永'].d,wk['永'].d);
+ assert.deepEqual(await loadTypeface('maoken',String.fromCodePoint(0x10ffff)),{});
+ assert.equal(normalizeTypeface('maoken'),'maoken');
  const unsupported=await loadTypeface('sans',String.fromCodePoint(0x10ffff));assert.deepEqual(unsupported,{});
  failNext=true;await assert.rejects(loadTypeface('serif','龟'),/字体加载失败/);
  assert((await loadTypeface('serif','龟'))['龟'],'failed requests can retry');
@@ -44,7 +49,7 @@ try{
  const page=paginate(prose,strokes)[0];
  assert.equal(pageSvg(prose,strokes,page,0,1,sample).split('M11 12L13 14Z').length-1,2);
  assert(pageSvg({...input,font:'kai'},strokes,pages[0],0,1).includes(strokes['永'].strokes[0]));
- for(const mode of ['single','article'])for(const font of ['kai','serif','sans']){
+ for(const mode of ['single','article'])for(const font of ['kai','serif','sans','wenkai','maoken']){
   const base={...input,mode,font,content:'永',layout:'prose'};
   const originalPage=paginate(base,strokes)[0];
   const outlines=font==='kai'?{}:sample;
@@ -90,3 +95,9 @@ const {articleLayout}=await import('../src/poetry.js');
 for(const layout of ['poem','prose']){const l=articleLayout({...referenceInput,mode:'article',layout});if(layout==='prose')assert(Math.abs(l.cell*210/794-15)<.00001);else {assert.equal(l.columns,16);assert.equal(l.cell,39);}assert(l.columns*l.cell<=624);}
 const wenkai=JSON.parse(fs.readFileSync(`public/fonts/wenkai/${Math.floor('永'.codePointAt(0)/128)}.json`));assert(wenkai['永']);
 const referenceSvg=comparisonSvg(referenceInput,inkData,wenkai,'reference');assert(referenceSvg.includes('细笔文楷'));assert(referenceSvg.includes('15毫米'));
+
+// A selected hard-pen font survives saved worksheet records without rewriting it.
+const {saveHistory,readHistory}=await import('../src/history.js');
+const values=new Map();const storage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v)};
+saveHistory({...inkInput,font:'maoken'},'manual',storage);
+assert.equal(readHistory(storage)[0].input.font,'maoken');

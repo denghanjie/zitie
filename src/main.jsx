@@ -3,6 +3,7 @@ import {saveHistory} from './history.js';
 import {INK_LEVELS,normalizeInk,comparisonSvg} from './worksheet';
 import Feedback,{track} from './feedback';
 import {canUseImportedDraft} from './quality';
+import {editReviewedSource} from './online-search.js';
 import {textIntegrityIssue} from './editorial.js';
 import {migrateLibraryDraft,knownTextCorrection} from './text-corrections.js';
 import React,{useState,useEffect,useRef} from 'react';
@@ -13,14 +14,14 @@ import PoetryPicker from './PoetryPicker';
 import TextbookPicker from './TextbookPicker';
 import {TYPEFACES,normalizeTypeface,loadTypeface,FONT_SIZES,normalizeFontSize} from './typefaces';
 const example={content:'春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。',title:'春晓',mode:'single',grid:'tian'};
-function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};if(!d.practiceProfile)Object.assign(d,{practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'});if(d.appearanceVersion!==1)Object.assign(d,{font:'wenkai',ink:'medium',traceStyle:'solid',appearanceVersion:1});return migrateLibraryDraft({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize),ink:normalizeInk(d.ink),traceStyle:d.traceStyle==='outline'?'outline':'solid'})}catch{return {...example,appearanceVersion:1,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}}}
+function getDraft(){try{const d={...example,...JSON.parse(localStorage.getItem('yizi-draft')||'{}')};if(!d.practiceProfile)Object.assign(d,{practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'});if(d.appearanceVersion!==1)Object.assign(d,{font:'wenkai',ink:'medium',traceStyle:'solid',appearanceVersion:1});return (d.source?.provenance?value=>value:migrateLibraryDraft)({...d,font:normalizeTypeface(d.font),fontSize:normalizeFontSize(d.fontSize),ink:normalizeInk(d.ink),traceStyle:d.traceStyle==='outline'?'outline':'solid'})}catch{return {...example,appearanceVersion:1,practiceProfile:'hardpen',font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}}}
 function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  const [inputMode,setInputMode]=useState('paste');
  const dialog=useRef(null);
  useEffect(()=>{if(inputMode==='paste')return;const el=dialog.current;el.showModal();const previous=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{el.close();document.body.style.overflow=previous}},[inputMode]);
  const correction=knownTextCorrection(draft.content);
- const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:d.source?.provenance?.kind==='online-user-reviewed'?{...d.source,provenance:{...d.source.provenance,editedAfterReview:true}}:null}:{})}));
- const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey,...(w.provenance?{provenance:w.provenance}:{})}}));setInputMode('paste')};
+ const change=(k,v)=>setDraft(d=>({...d,[k]:v,...(k==='content'?{source:editReviewedSource(d.source,v)}:{})}));
+ const applyWork=w=>{setDraft(d=>({...d,content:w.text,title:w.title.slice(0,24),layout:w.layout,lineBreak:'auto',source:{title:w.title,author:w.author,url:w.sourceUrl,collection:w.collection,qualityKey:w.qualityKey,...(w.original?{original:w.original}:{}),...(w.provenance?{provenance:w.provenance}:{})}}));setInputMode('paste')};
  return <form className="settings" onSubmit={e=>{e.preventDefault();generate()}}>
  <label className="section-title" htmlFor="content">练习内容</label>
  <div className="content-actions"><span>直接粘贴，或从资料库选择</span><div><button type="button" onClick={()=>setInputMode('search')}>查找诗文 ↗</button><button type="button" onClick={()=>setInputMode('textbook')}>教材选篇 ↗</button></div></div>
@@ -30,15 +31,16 @@ function Settings({draft,setDraft,busy,generate,trial,trialBusy}){
  {inputMode==='textbook'&&<TextbookPicker onApply={applyWork}/>}
  </dialog>
  {draft.source&&<p className="source-note">已填入：《{draft.source.title}》 · {draft.source.author}{draft.source.collection&&<> · {draft.source.collection}</>}{draft.source.provenance?.kind==='online-user-reviewed'&&<> · 用户核对，未经资料库校勘{draft.source.provenance.editedAfterReview?'（填入后已编辑）':''} · <a href={draft.source.url} target="_blank" rel="noreferrer">来源版本 {draft.source.provenance.revisionId} ↗</a></>} · 正文可继续修改</p>}
+ {(draft.source?.provenance?.source||draft.source?.original)&&<details className="source-note"><summary>对照导入来源原文（转换前）</summary><p>{(draft.source.provenance?.source||draft.source.original).title}</p><pre style={{whiteSpace:'pre-wrap'}}>{(draft.source.provenance?.source||draft.source.original).text}</pre></details>}
  <textarea id="content" maxLength={3000} value={draft.content} onChange={e=>change('content',e.target.value)} placeholder="粘贴想练习的汉字、段落或文章…"/>
  {correction&&<p className="source-note" role="alert">这份《{correction.title}》含已确认的旧版用字差异。<button type="button" onClick={()=>change('content',correction.content)}>改用校订正文</button></p>}
  <div className="text-tools"><button type="button" onClick={()=>setDraft({...draft,...example,source:null,mode:draft.mode,grid:draft.grid})}>填入《春晓》</button><span>{[...draft.content].length} / 3000</span><button type="button" onClick={()=>change('content','')}>清空文本</button></div>
  <fieldset><legend>练习方式</legend>{[['single','逐字练习','每字一行 · 六次描写 · 笔顺分解'],['article','整篇临摹','保留标点与段落 · 连贯书写']].map(([v,t,d])=><label className="radio-row" key={v}><input type="radio" name="mode" value={v} checked={draft.mode===v} onChange={()=>change('mode',v)}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</fieldset>
- <label className="layout-setting">练字版式<select aria-label="练字版式" value={draft.practiceProfile||'large'} onChange={e=>setDraft(d=>({...d,practiceProfile:e.target.value,...(e.target.value==='hardpen'?{font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}:{})}))}><option value="hardpen">硬笔小字 · 标准 15 毫米（诗词自适应）</option><option value="large">原版大字 · 宽松字格</option></select><small>硬笔小字采用原生细笔文楷；逐字练习六个范字，另留四格独立书写。</small></label>
+ <label className="layout-setting">练字版式<select aria-label="练字版式" value={draft.practiceProfile||'large'} onChange={e=>setDraft(d=>({...d,practiceProfile:e.target.value,...(e.target.value==='hardpen'?{font:'wenkai',fontSize:'normal',ink:'medium',traceStyle:'solid'}:{})}))}><option value="hardpen">硬笔小字 · 标准 15 毫米（诗词自适应）</option><option value="large">原版大字 · 宽松字格</option></select><small>硬笔小字可搭配细笔文楷或硬笔楷书；逐字练习六个范字，另留四格独立书写。</small></label>
  <div className="font-controls"><label className="layout-setting">字体<select aria-label="范字字体" value={draft.font||'kai'} onChange={e=>change('font',e.target.value)}>{TYPEFACES.map(f=><option key={f.id} value={f.id}>{f.label}</option>)}</select></label><label className="layout-setting">字号<select aria-label="范字大小" value={draft.fontSize} onChange={e=>change('fontSize',e.target.value)}>{FONT_SIZES.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label></div>
  <div className="font-controls"><label className="layout-setting">范字深浅<select aria-label="范字深浅" value={draft.ink} onChange={e=>change('ink',e.target.value)}>{INK_LEVELS.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select></label><label className="layout-setting">描写样式<select aria-label="描写样式" value={draft.traceStyle} onChange={e=>change('traceStyle',e.target.value)}><option value="solid">实心范字</option><option value="outline">空心轮廓</option></select></label></div>
  <button className="trial-button" type="button" disabled={trialBusy||busy} onClick={()=>trial('reference')}>下载细笔灰字试印页（15 毫米字格）</button>
- <details className="print-comparisons"><summary>更多试印对比</summary><button className="trial-button" type="button" disabled={trialBusy||busy} onClick={()=>trial('ink')}>{trialBusy?'正在制作试印页…':'下载深浅与空心对比试印页'}</button><button className="trial-button" style={{marginTop:8}} type="button" disabled={trialBusy||busy} onClick={()=>trial('size')}>下载字号大小对比试印页</button></details><p className="source-note">觉得字大可选「较小 · 65%」，字格不变。推荐「细笔文楷＋范例灰」，打印后若仍偏深，可切换浅色。逐字练习首格和笔顺保留清晰示范；深浅与空心应用于描写范字。</p>
+ {draft.font==='maoken'&&<p className="source-note">猫啃硬笔楷书保留自然手写笔形；未收录的生僻字会提示并使用备用字形。</p>}<details className="print-comparisons"><summary>更多试印对比</summary><button className="trial-button" type="button" disabled={trialBusy||busy} onClick={()=>trial('ink')}>{trialBusy?'正在制作试印页…':'下载深浅与空心对比试印页'}</button><button className="trial-button" style={{marginTop:8}} type="button" disabled={trialBusy||busy} onClick={()=>trial('size')}>下载字号大小对比试印页</button></details><p className="source-note">觉得字大可选「较小 · 65%」，字格不变。推荐「细笔文楷＋范例灰」，打印后若仍偏深，可切换浅色。逐字练习首格和笔顺保留清晰示范；深浅与空心应用于描写范字。</p>
  <details className="advanced-settings"><summary>更多设置<span>排版 · 字格 · 标题</span></summary>
  <p className="source-note">字号只调整范字，字格大小不变；逐字练习的笔顺始终使用笔顺楷体。</p>
  {draft.mode==='article'&&<label className="layout-setting">内容排版<select aria-label="内容排版" value={draft.layout||'auto'} onChange={e=>change('layout',e.target.value)}><option value="auto">自动识别诗词 / 文章</option><option value="poem">诗词 · 按句长排版</option><option value="prose">文章 · 连续排版</option></select><small>根据句长统一缩放字格与范字，优先完整成行；过长句仍折行，空行分阕。</small></label>}
@@ -70,7 +72,7 @@ function App(){
   if([...draft.content].length>3000){setError('一次最多生成 3000 个字符，请分段制作。');return;}
   setBusy(true);setMessage('正在准备字形和笔顺…');
   try{
-   if(!await canUseImportedDraft(draft)){setError('已保存的资料库正文尚未完成校勘，请重新查找文字已对照的版本，或查看正文校勘记录。');return;}
+   if(!await canUseImportedDraft(draft)){setError(draft.source?.provenance&&!draft.source?.qualityKey?'已保存的来源核对记录已过期或不完整，请重新查找并核对来源后再生成。':'已保存的资料库正文尚未完成校勘，请重新查找文字已对照的版本，或查看正文校勘记录。');return;}
    const input={...draft,font:normalizeTypeface(draft.font),fontSize:normalizeFontSize(draft.fontSize)};
    const [data,fontGlyphs]=await Promise.all([loadCharacters(input.content),loadTypeface(input.font,input.content)]);
    const layoutInfo=input.mode==='article'?articleLayout(input):null;
@@ -97,7 +99,7 @@ function App(){
  <div className="status" role="status" aria-live="polite">{error || (busy?message:dirty?'内容或设置已修改，点击「生成字帖」更新预览。':message)}</div>
  <div className="paper-wrap">{result?<div className="paper" dangerouslySetInnerHTML={{__html:result.svgs[page]}}/>:<div className="empty">输入文字后，你的字帖会出现在这里。</div>}</div>
  {result&&<nav className="pagination" aria-label="预览分页"><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>← 上一页</button><label>第 <select aria-label="跳转页码" value={page} onChange={e=>setPage(+e.target.value)}>{result.svgs.map((_,i)=><option key={i} value={i}>{i+1}</option>)}</select> / {result.svgs.length} 页</label><button disabled={page===result.svgs.length-1} onClick={()=>setPage(p=>p+1)}>下一页 →</button></nav>}
- <p className="privacy">练习正文在本机排版；使用 AI 帮找时，仅查找线索发送给 DeepSeek。</p></section></main>
+ <p className="privacy">练习正文在本机排版；普通查找只检索本站资料。联网查找会将线索发送给百度；AI 帮找另发送给 DeepSeek，并查询网络来源。</p></section></main>
  {historyOpen&&<History onClose={()=>setHistoryOpen(false)} onOpen={openHistory}/>}
  <Feedback/>
  <footer>打印建议：A4 纸张 · 纵向 · 100% 比例 · 关闭浏览器页眉页脚 <span>笔顺数据：<a href="https://hanziwriter.org" target="_blank" rel="noreferrer">Hanzi Writer</a> / Make Me a Hanzi</span></footer>
