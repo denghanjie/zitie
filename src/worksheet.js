@@ -1,4 +1,4 @@
-import {fontScale} from './typefaces.js';
+import {fontScale,TYPEFACES} from './typefaces.js';
 import {isHan, articleLayout, paginatePoetry, wrapParagraph} from './poetry.js';
 export {isHan, articleLayout} from './poetry.js';
 export const INK_LEVELS=[{id:'light',label:'浅 · 圆珠笔推荐',color:'#d2d2d2'},{id:'medium',label:'范例灰 · 推荐',color:'#aaaaaa'},{id:'dark',label:'深 · 对照临写',color:'#929292'}];
@@ -122,7 +122,7 @@ export function pageSvg(input,data,page,index,total,fontGlyphs={}) {
    }
   });
  }
- const fontLabel={serif:'宋体',sans:'黑体',wenkai:'细笔文楷'}[input.font];
+ const fontLabel=input.font==='kai'?null:TYPEFACES.find(f=>f.id===input.font)?.label;
  const footer=fontLabel?`范字：${fontLabel}${input.mode==='single'?' · 笔顺示意：笔顺楷体':''}`:'静下心，写好每一个字。';
  s+=text(footer,397,1076,13,'#8b968d','middle')+text(`${index+1} / ${total}`,709,1076,12,'#8b968d','end');
  return s+'</svg>';
